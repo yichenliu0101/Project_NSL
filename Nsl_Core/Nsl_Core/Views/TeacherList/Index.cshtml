@@ -1,0 +1,387 @@
+﻿@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+@using System.Text.Json;
+
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "ArticleIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    LoginDto? user = null;
+    string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+
+    int ID = 0;
+    if (token != null)
+    {
+        user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+        ID = user.Id;
+    }
+}
+<body>
+    <!-- banner-container -->
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="~/image/banner-7.jpg"
+                 alt="image description"
+                 class="img-fluid test-banner-img">
+        </div>
+        <!-- category search -->
+    </section>
+
+    <!-- Teachers list -->
+    <section class="block-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-12 col-lg-12 mb-30 wow fadeInUp"
+                     data-wow-duration="600ms">
+                    <div class="about-block active">
+                        <div class="container text-center justify-content-center">
+                            <div class="row">
+                                <div class="text-center d-flex">
+                                    <div class="categories-box mt-2 mx-2" catid="0">
+                                        全部
+                                    </div>
+                                    <div class="categories-box mt-2 mx-2" catid="1">
+                                        英文
+                                    </div>
+                                    <div class="categories-box mt-2 mx-2" catid="2">
+                                        日文
+                                    </div>
+                                    <div class="categories-box mt-2 mx-2" catid="3">
+                                        韓文
+                                    </div>
+                                    <div class="categories-box mt-2 mx-2" catid="5">
+                                        西班牙文
+                                    </div>
+                                    <div class="categories-box mt-2 mx-2" catid="4">
+                                        阿拉伯文
+                                    </div>
+                                    <select id="languages" name="languages" class="categories-select-box mt-2 mx-2">
+                                    </select>
+                                </div>
+                                <div class="text-center d-flex">
+                                    <div class="categories-box mt-3 mx-2" orderfor="price">
+                                        按價格排序
+                                    </div>
+                                    <div class="categories-box mt-3 mx-2" orderfor="star">
+                                        按評價排序
+                                    </div>
+                                    <div class="categories-box mt-3 mx-2" orderfor="comment">
+                                        按評論數排序
+                                    </div>
+                                </div>
+                            </div>
+                                <!--分頁-->
+                            <nav aria-label="Page navigation example" class="mx-auto mt-4 d-inline">
+                                <ul class="pagination d-flex mt-3" style="padding-left:40%">
+                                    <li class="page-item pages">
+                                        <a class="page-link" href="#" aria-label="Previous" onclick="PagePrevious()">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item pageitems" onclick="PageTo(1)"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next" onclick="PageNext()">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div>
+                            <div id="lessonlist">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+
+@section Scripts
+    {
+    <script>
+        //分頁相關
+        let paginationIndex = 0 //不能調整
+        let arrLenght = 0 //必要!!!要給予原本拿到的資料的陣列長度
+        let range = 5 //必要!!!依照需求直接在頁面指定，不然就是預設顯示10筆資料
+        let pagination = []
+        //把完整版陣列丟進去，會生成相對應頁數的控制器
+        //每次按按鈕都會執行一次Load
+        function PageItem(arr) {
+            let re = ""
+            for (let i = 0; i < Math.ceil(arr.length / range); i++) {
+                if(i == ((paginationIndex+range)/range)-1){
+                    re += `<li class="page-item pageitems active" onclick="PageTo(${i + 1})"><a class="page-link" href="#">${i + 1}</a></li>`
+                }
+                else{
+                    re += `<li class="page-item pageitems" onclick="PageTo(${i + 1})"><a class="page-link" href="#">${i + 1}</a></li>`
+                }
+            }
+            $("ul .pageitems").remove()
+            $("ul .pages").after(re)
+        }
+        //去指定頁
+        function PageTo(page) {
+            paginationIndex = (page * range) - range
+            console.log(paginationIndex)
+            load()
+        }
+        //上一頁
+        function PagePrevious() {
+            
+            if ((paginationIndex - range) >= 0) {
+                paginationIndex = paginationIndex - range
+                load()
+            }
+        }
+        //下一頁
+        function PageNext() {
+            console.log(paginationIndex + range)
+            console.log(arrLenght - 1)
+            if ((paginationIndex + range) < (arrLenght - 1)) {
+                paginationIndex = paginationIndex + range
+                load()
+            }
+        }
+        //擷取陣列內容，把完整版的陣列丟進去
+        function Pagination(list) {
+            const re = list.slice(paginationIndex, paginationIndex + range)
+            return re
+        }
+
+
+
+        let Update = function (catid, orderfor, langId) {
+            load(catid, orderfor, langId)
+        }
+        const search = {flag:true};
+        async function load(catid, orderfor) {
+            console.log(catid)
+            if (catid != undefined&&catid!=0) {
+                search.CategoryId = catid;
+                paginationIndex = 0
+            }
+            if(catid == 0){
+                search.CategoryId = null;
+                paginationIndex = 0
+            }
+
+            if (orderfor != undefined) {
+                if (orderfor == 'price') {
+                    search.Order = 'price';
+                    paginationIndex = 0
+                }
+                else if (orderfor == 'star') {
+                    search.Order = "star";
+                    paginationIndex = 0
+                }
+                else if (orderfor == 'comment') {
+                    search.Order = 'comment';
+                    paginationIndex = 0
+                }
+            }
+
+
+            console.log(search)
+            const response = await fetch("https://localhost:7016/api/Others/GetTeacherLessonList",
+                {
+                    method: 'post',
+                    body: JSON.stringify(search),
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                }
+            );
+            const datas = await response.json();
+            PageItem(datas)
+            arrLenght = (Math.floor(datas.length)) + 1
+            pagination = Pagination(datas)
+            console.log(datas)
+
+            const details = pagination.map(detail => {
+                let teacherTag = []
+                if (detail.tagNames !== null) {
+                    teacherTag = detail.tagNames.map(tag => {
+                        return (`<a href="@Url.Content("~/TeacherList/ArticleIndex?Tag=")${tag}">${tag}</a>`)
+                    })
+                }
+                else {
+                    teacherTag = ["<span>尚無標籤</span>", ""];
+                }
+
+                detail.satisfaction = (detail.satisfaction === null) ? "尚未評論" : detail.satisfaction.toFixed(1)
+                detail.commentCount = (detail.commentCount === null) ? "" : detail.commentCount + "個評論"
+                console.log(teacherTag)
+                return (`<ul style="list-style-type: none;">
+                            <li style="color:black">
+                                <div class="div-teacher-row row align-items-center" >
+                                    <div class="col-2 div-circle-tlist" style="padding:0">
+                                        <img class="img-div-circle-tlist" src="@Url.Content("~/uploads/")${detail.imageName}" 
+                                            alt="teacher" title="teacherName" />
+                                        <div class="text-center mt-3 mx-auto tlist-div">
+                                            <a class="tName-tlist" 
+                                            href="@Url.Content("~/TeacherList/Info/")${detail.teacherId}">
+                                                ${detail.teacherName}
+                                            </a>
+                                        </div>
+                                     </div>
+                                     <div class="col-8 px-5">
+                                        <div class="display-inline teacher-list-title col-6">
+                                            <a style="font-size:23px; color:firebrick" href="@Url.Content("~/TeacherList/Info/")${detail.teacherId}">
+                                                ${detail.title}
+                                            </a><br>
+                                        </div>
+                                        <div style="color:orange" class="teacherTag">
+                                            ${teacherTag.join(" | ")}
+                                        </div>
+                                     <div>
+                                        <i class="fa-solid fa-star teacher-star-icons"></i>
+                                        <span>${detail.satisfaction}</span>
+                                        &nbsp;&nbsp;
+                                        <span id="com"">${detail.commentCount}</span>
+                                     </div>
+                                     <div class="teachers-introduction">
+                                        <span class="p-text col-lg-9">
+                                            老師自我介紹 : ${detail.introduction}
+                                        </span><br />
+                                      </div>
+                                  </div>
+
+                                    <div class="col-2">
+                                    <div class="row">
+                                    <div class="col-12">
+                                  <strong style="font-size:20px">課程價錢:${detail.price}</strong>
+                                  <br/>
+                                  <small style="font-size:20px">60分鐘</small>
+                                  </div>
+                                  </div>
+                                         <div class="row text-center mt-3">
+                                  <input type="hidden" name="TeacherID" value="${detail.teacherId}" />
+                                  <div class="btn btn-white mx-auto teachers-list-buy-btn" style="width:80px">
+                                                        加入購物車
+                                  </div>
+                                   <div class="btn mx-auto teachers-list-contact-btn messToTeacher" onclick="messTo('${detail.memberId}','${detail.teacherName}')">
+                                                                                            聯繫老師
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                        </ul>
+                                                               `)
+            })
+
+            $("#lessonlist").html(details.join(""));
+        }
+
+
+        $(function () {
+            load();
+            //加入購物車功能
+            $(document).on('click', '.teachers-list-buy-btn', function () {
+                const teacherId = parseInt($(this).siblings("input").val());
+                console.log(teacherId)
+                var formData = {};
+        @if (user == null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: '購買失敗！',
+                text: `請登入帳號!`
+            })
+            </text>
+ 
+
+        }
+            //1.ajax呼叫API存入資料
+            //需寫入的物件
+            var formData = {};
+            formData.memberId = @ID;
+            formData.teacherId = teacherId;
+            formData.count = 0;
+            formData.title = '';
+            formData.price = 0;
+            formData.imageName = '';
+
+            console.log(formData);
+
+            $.ajax({
+                dataType: 'json',
+                type: "POST",
+                url: "https://localhost:7016/api/ShoppingCarts/CreateShoppingCart",
+                async: false,
+                data: JSON.stringify(formData),
+                contentType: 'application/json;', // 要送到server的資料型態
+                success: function (result) {
+                    console.log("API 回應：", result);
+                    if (result.isSuccess == true) {
+                             //2.ajax success後,ajax呼叫api抓此人的購物車資訊
+                        GetShopingCart();
+                    }
+                },
+            });
+        });
+
+
+     });
+
+        //語言按鈕搜尋功能
+        $('.categories-box').click(function () {
+            const catid = $(this).attr('catid');
+            const orderfor = $(this).attr('orderfor');
+            console.log(orderfor, search.Order)
+            if(orderfor == search.Order){
+                search.flag = !search.flag;
+            }
+            else{
+                search.flag = true;
+            }
+            //console.log('catid:' + catid + ';orderfor=' + orderfor);
+            load(catid, orderfor);
+        });
+
+        //change語言下拉式 查詢語言類別
+        $('#languages').on('change', function () {
+
+            let langid = $(this).val();
+
+            console.log(langid)
+
+            load(langid, "")
+        })
+
+
+        //取得語言(下拉式)
+        $(function () {
+            $.ajax({
+                dataType: 'json',
+                type: "Get",
+                url: "https://localhost:7016/api/Others/Categories",
+                async: false,
+                success: function (data) {
+                    console.log("API 回應：", data);
+                    $('#languages').append('<option>請選擇</option>');
+                    if (data.length > 0) {
+                        for (let k in data) {
+                            $('#languages').append('<option value="' + data[k].id + '" >' + data[k].name + '</option>');
+                        }
+                    }
+                },
+                error: function (jqXHR) {
+                    alert('error', jqXHR.responseText);
+                }
+            });
+        });
+
+    </script>
+}
+
+@section Styles{
+
+
+
+}

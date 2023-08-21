@@ -1,0 +1,135 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "StudentInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.TeacherResumeDto
+<main>
+    <!-- banner-container -->
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height ">
+        </div>
+    </section>
+    <!-- 聯絡老師區 -->
+    <div class="hiteacher fonttfffff" data-aos="fade-left">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 setting-content">
+                    <div class="tindexphoto-container">
+                        @if (Model.ImageName == null) Model.ImageName = "default.jpg";
+                        <img class="tindexphoto" src="~/uploads/@Model.ImageName" alt="teacher"
+                             title="teacherName" />
+                    </div>
+                </div>
+                <div class="col-md-6 setting-content">
+                    <p style="margin-bottom: 20px;color:peru">Hello!!</p>
+                    <p style="margin-bottom: 20px;color:peru">老師</p>
+                    <p style="margin-bottom: 20px;color:peru">@Model.TeacherName</p>
+                    <p style="color:peru">歡迎回來!!</p>
+                </div>
+
+            </div>
+        </div>
+
+        <hr style="margin-bottom: 30px;color:peru">
+
+        <div>
+            <a asp-action="Resume" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left:37px;margin-bottom: 15px;font-size:20px">履歷管理</a>
+            <!-- 這裡要改，返回上一頁，或是引導到教師頁面 -->
+            <a asp-action="TutorInfo" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left:37px;margin-bottom: 15px;font-size:20px">課程管理</a>
+            <a asp-action="StudentInfo" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left:37px;margin-bottom: 15px;font-size:20px">學生資訊</a>
+        </div>
+    </div>
+    <!-- 聯絡老師區 -->
+    <!-- 標題 簡介 -->
+    <!-- 自我介紹 評價 履歷 -->
+
+    <section class="block-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7 col-lg-9 mb-30 wow fadeInUp" data-wow-duration="600ms">
+                    <div class="about-block active">
+                        <p class="col-lg-12 font30px" style="font-size: 36px;">學生資訊</p>
+                        <div class="padding-TB">
+                            <hr>
+                            @*<form class="tCV-form mx-auto">*@
+                                <strong style="font-size: 36px;">學生列表</strong>
+                                <div style="margin-top: 30px;">
+                                    <table class="table">
+                                        <thead style="background-color:black;text-align:center">
+                                            <tr style="color:white">
+                                                <th scope="col">#</th>                                               
+                                                <th scope="col">學生姓名</th>
+                                                <th scope="col">學生照片</th>
+                                                <th scope="col">電子信箱</th>
+                                                <th scope="col">已完成堂數</th>
+                                                <th scope="col">未完成堂數</th>
+                                                <th scope="col">平均滿意度</th>
+                                                <th scope="col">聯絡學生</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @*</form>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@section Scripts{
+    <script>
+        const url = `https://localhost:7016/api/TeacherStudent/TeacherStudentRecord?teacherId=${@Model.TeacherId}`
+
+        const ulTeacher = $("#tBody");
+        load();
+
+        async function load() {
+            const response = await fetch(url);
+            const datas = await response.json();
+            const teachers = studentRecordList(datas);
+            ulTeacher.html(teachers.join(""))
+        }
+
+
+        function studentRecordList(datas) {
+            const students = datas.map(student => {
+                let avgSatisfactionDisplay = student.avgSatisfaction !== null ? student.avgSatisfaction : '尚無評論';
+                let string = `<tr align='center' valign="middle">
+                                <th scope="row"></th>                                
+                                <td>${student.memberName}</td>
+                                <td style="width:15%"><img src='@Url.Content("~/uploads/")${student.memberImageName}'style="height: 40%;width: 40%;"/></td>
+                                <td>${student.email}</td>
+                                <td>${student.trueTutor}</td>
+                                <td>${student.falseTutor}</td>
+                                <td>${avgSatisfactionDisplay}</td>
+                                <td><button type="button" onclick="messTo('${student.memberId}','${student.memberName}')">聯絡學生</button></td>
+                              </tr>`
+                return (string)
+            })
+            return students;
+        }
+
+
+
+    </script>
+}
+

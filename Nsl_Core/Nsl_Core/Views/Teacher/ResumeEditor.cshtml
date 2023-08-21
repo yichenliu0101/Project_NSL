@@ -1,0 +1,132 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@{
+    ViewData["Title"] = "ResumeEditor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.TeacherEditDto
+
+<main>
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="~/image/banner-7.jpg"
+            alt="image description"
+            class="img-fluid test-banner-img">
+        </div>
+    </section>
+    <!-- Teachers list -->
+    <section class="block-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-12 col-lg-12 mb-30 wow fadeInUp"
+                data-wow-duration="600ms">
+                    <div class="about-block active">
+                        <div class="container text-center">
+                            <h3 class="mb-4" id="demoTeacherResume">編輯履歷</h3>
+                            <form class="login-form mx-auto" method="post">
+                                <strong>老師資料</strong>
+                                <div class="mt-3">
+                                    <label class="me-2">教育背景:</label>
+                                    <input value="@Model.teacherId" name="TeacherId" type="hidden"/>
+                                    <input type="text"
+                                    class="form-control div-login-form-input"
+                                    id="edubackground" name="Education"
+                                    placeholder="請輸入教育背景" value="@Model.Education" />
+                                </div>
+                                <div class="mt-3">
+                                    <label class="me-2">工作經驗:</label>
+                                    <input type="text"
+                                    class="form-control div-login-form-input"
+                                    id="workexperience" name="WorkExperience"
+                                    placeholder="請輸入工作經驗" value="@Model.WorkExperience" />
+                                </div>
+                                <div class="mt-3">
+                                    <label class="me-2">銀行代碼:</label>
+                                    <select id="BankCodeId" name="BankCodeId" class="form-control div-login-form-input">
+                                        @{
+                                            if (Model.BankCodeId==null)
+                                            {
+                                                <option value="0" selected>請選擇銀行代碼</option>
+                                            }
+                                            else
+                                            {
+                                                
+                                                <option value="@Model.BankCodeId" selected name="BankCodeName">@Model.BankCodeName</option>
+                                            }
+                                        }
+                                        
+                                    </select>
+                                </div>
+                                <div class="mt-3">
+                                    <label class="me-2" id="demoTeacherBank">銀行帳號:</label>
+                                    <input type="text"
+                                           class="form-control div-login-form-input"
+                                           id="bankaccount" name="BankAccount"
+                                           placeholder="請輸入銀行帳號" value="@Model.BankAccount" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                </div>
+                                <hr />
+                                <strong>
+                                    教師自介
+                                </strong>
+                                <div class="mt-3">
+                                    <label class="me-2">標題:</label>
+                                    <input type="title"
+                                           class="form-control"
+                                           id="title" name="Title"
+                                           placeholder="請輸入標題"
+                                           style="display: inline-block; width:70%" Value="@Model.Title" />
+                                </div>
+                                <div class="my-3">
+                                    <label class="me-2">內文:</label>
+                                    <div style="display: inline-block; width: 70%; vertical-align: top;">
+                                        <textarea class="form-control" name="Introduction" placeholder="請輸入內文" id="introContent" style="height: 150px; display: block; width: 100%;">@Model.Introduction</textarea>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="margin-right: 30px;" id="submit">確定編輯</button>
+                                <a asp-action="Resume" asp-controller="Teacher" class="btn btn-primary" style="color:white">回上一頁</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts{
+    <script>
+        const url = "https://localhost:7016/api/Others/BankCode"
+
+        LoadselectBank()
+
+        const selectBank = document.querySelector('#BankCodeId');
+        async function LoadselectBank() {
+            const response = await fetch(url);
+            const datas = await response.json();
+            const bankCodeNames = datas.map(bankCodeName => {               
+                return (`<option class="optionText" value="${bankCodeName.id}">${bankCodeName.name}</option>`)
+            })
+            selectBank.innerHTML += bankCodeNames.join("");
+        }
+
+        $("#demoTeacherResume").on("click", () => {
+            $('#edubackground').val('資展國際147期')
+            $('#workexperience').val('當過5年速食店店長')
+            $('#BankCodeId').val('7')
+            $('#bankaccount').val('212321782')
+            $('#title').val('努力向上用心教學，快樂學習,拒絕死記硬背💘')
+            $('#introContent').val('📢現居泰國,無時差🏅來自美國的母語老師🏅口音純正,會說中文🏅線上機構完課數 10000+🏅15 年專注線上線下兒童美語教學🏅 TEFL 認證老師🏅學生主要來自香港,台灣和內地🏅現居住於泰國,上課時間充沛,無時差問題🏅多年累積超多豐富課件🏅活力充沛,親和力超強')
+        })
+
+        $("#demoTeacherBank").on("click", () => {
+            $('#bankaccount').val('10829748749')
+        })
+    </script>
+
+}
+

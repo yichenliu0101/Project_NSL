@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "ArticleIndex";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+<!-- Title -->
+<section>
+    <div class="backplatform-page">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <h2 id="backTitle">網站管理</h2>
+            </div>
+
+        </div>
+        <hr />
+
+        <div class="row">
+            <div class="col-lg-4">
+                <a href='@Url.Content("~/BackMaintain/ArticleIndex")'>
+                    <img src="~/picture/toarticle.png" height="200" />
+                </a>
+            </div>
+            <div class="col-lg-4">
+                <a href='@Url.Content("~/BackMaintain/CouponIndex")'>
+                    <img src="~/picture/tocoupon.png" height="200" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

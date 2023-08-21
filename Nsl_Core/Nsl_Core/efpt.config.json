@@ -1,0 +1,207 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "NSL_DBContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models\/EFModels",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Nsl_Core",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[Article].[Articles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Article].[ArticlesClick]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Chat].[ChatHistories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Chat].[ChatNumber]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Chat].[Message]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Comment].[Comments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Coupon].[Coupons]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Coupon].[CouponUsageHistory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Member].[Members]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Member].[MembersConsumptionRecordDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Member].[MembersConsumptionRecords]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Member].[MembersTutorRecords]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Member].[MembersTutorStock]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Member].[ShoppingCart]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Areas]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[BankCode]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Citys]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Languages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[PaymentMethods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[RevenueTarget]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Roles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Tags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[TutorExperience]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[TutorHoursOfWeek]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[TutorPeriod]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[Week]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Others].[WorkStatus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeacherId]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersApply]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersDefaultTutorPeriods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersLanguages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersRealTutorPeriods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersResume]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersSalaryRecords]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[Teacher].[TeachersTags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MemberData]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[TeacherData]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[spMessage]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[spMessageDetail]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[Member].[spGetMemberTutorPeriod]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[Teacher].[spGetTeacherTutorPeriod]",
+         "ObjectType": 1
+      }
+   ],
+   "UiHint": "desktop-rae7e6c.NSL_DB.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

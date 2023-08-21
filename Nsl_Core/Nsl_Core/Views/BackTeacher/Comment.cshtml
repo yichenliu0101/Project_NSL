@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Comment";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.BackTeacherResumeDto
+
+
+<!-- Title -->
+<section>
+    <div class="backplatform-page" id="app">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <h2 id="backTitle">教師資料維護</h2>
+            </div>
+
+        </div>
+        <hr />
+        <p class="font30px text-center" style="margin-bottom:30px">評論維護</p>
+        <table class="font30px table container div-backcomment text-center">
+            <thead >
+                <tr>
+                    <th class="col-2" scope="col">會員名稱</th>
+                    <th class="col-6">評論</th>
+                    <th class="col-2">滿意度</th>
+                    <th class="col-2">刪除</th>
+                </tr>
+            </thead>
+            <tbody class="font20px" v-for="item in items" id="tBody">
+            </tbody>
+        </table>
+        <div class="row px-0">         
+            <div>
+                <nav aria-label="Page navigation example">
+                </nav>
+            </div>
+            <div class="col-4"></div>
+            <div class="mt-4 ms-2 col-4">
+                <div class="mx-auto px-3 display-inline">
+                    <a href='@Url.Content("~/BackTeacher/CAU/")@Model.TeacherId' class="btn btn-primary"
+                       style="margin-left: 30%;">回上一頁</a>
+                </div>
+            </div>
+            <input type="hidden" name="Id" id="id" value="@ViewBag.TeacherId" />
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        const url = `https://localhost:7016/api/TeachersResumes/BackTeacherComments?id=${@Model.TeacherId}`
+        const tBody = $("#tBody");
+        Load()
+
+        async function Load() {
+            const response = await fetch(url);
+            const datas = await response.json();
+            const commons = commonList(datas);
+            tBody.html(commons.join(""))
+            CommentDelEvent()
+        }
+
+        function commonList(datas) {
+            const commons = datas.map(common => {
+                let studentComment = common.commentContent !== null ? common.commentContent : '尚無評論';
+                let avgSatisfactionDisplay = common.satisfaction !== null ? common.satisfaction : '尚無評論';
+                let string = `<tr>
+                                <td class="span-coloronly">${common.memberName}</td>
+                                <td class="">${studentComment}</td>
+                                <td>★${avgSatisfactionDisplay}</td>
+                                <td><button type="button" class="btn-backedit deleteComment" value="${common.id}">刪除</button></td>
+                              </tr>`
+                return (string)
+            })
+            return commons;
+        }
+
+        function CommentDelEvent() {
+            $(".deleteComment").on("click", function () {
+                const id = $(this).val();
+
+                Swal.fire({
+                    title: '確定要刪除嗎?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `https://localhost:7016/api/TeachersResumes/DeleteComment` + "?id=" + id,
+                            type: 'DELETE'
+                        }).done(function (data) {
+                            if (data.isSuccess) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '刪除成功！',
+                                    text: "刪除成功，編號為 " + id,
+                                });
+                                Load();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '刪除失敗！',
+                                    text: `${data.errMsg}`
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+}

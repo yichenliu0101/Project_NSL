@@ -1,0 +1,123 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<section style="height:90px;background-color:black">
+</section>
+
+<section id="app" class="my-4">
+	<div class="container text-center">
+		<div class="text-center mb-3">
+			<h2>
+				<strong class="h6 fw-normal mb-15 text-primary text-capitalize d-block">MSIT147</strong>
+				<strong class="text-uppercase d-block">開發人員</strong>
+			</h2>
+		</div>
+		<v-carousel>
+			<div id="carouselExampleIndicators" class="carousel slide mx-auto fade-enter-carousel" data-bs-ride="carousel"
+				 style="height: 200px;" data-bs-interval="3000">
+				<div class="carousel-inner carousel-size">
+					<div v-for="(slide, index) in slidesImg" :key="index"
+						 :class="['carousel-item', { 'active': index === 0 }]">
+						<img :src="`@Url.Content("~/picture/")${slide.img}`" alt="...">
+					</div>
+				</div>
+			</div>
+		</v-carousel>
+
+		<div class="row">
+			<div class="developers-intro-frame col m-1 fade-enter" v-for="(data, index) in datas" :key="data.id"
+				 :id="data.id" @@mouseover="data.hoverToggle=true" @@mouseleave="data.hoverToggle=false"
+				 :style="{ 'animation-delay': (index * 0.2) + 's'}">
+				<transition :appear="true"
+							mode="out-in">
+					<img v-if="!data.hoverToggle"
+						 :src="`@Url.Content("~/picture/")/${data.imageName}`" alt="...">
+				</transition>
+				<transition :appear="true"
+							mode="out-in">
+					<div v-if="data.hoverToggle" class="developer-back-info">
+						<h4 class="mb-2 developer-header">開發者資訊</h4>
+						<div class="developer-info-item">
+							<label>姓名</label>
+							<div><strong>{{data.name}}</strong></div>
+						</div>
+						<div class="developer-info-item">
+							<label>性別</label>
+							<span>{{data.gender}}</span>
+						</div>
+
+						<div class="developer-info-item">
+							<label>電子郵件</label>
+							<span>{{data.email}}</span>
+						</div>
+						<div class="developer-info-item">
+							<label>電話</label>
+							<span>{{data.phone}}</span>
+						</div>
+						<div class="developer-info-item">
+							<label>居住地</label>
+							<span>{{data.cityName}}</span><span>{{data.areaName}}</span>
+						</div>
+						<div class="my-3">
+							<button type="button" class="btn btn-primary"
+									style="min-width: 100px;padding:10px">
+								Click
+							</button>
+						</div>
+					</div>
+				</transition>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+@section Styles{
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.js'
+			integrity='sha512-w39cIBZHEf0ac8RERRGs+aTrQbBIpb+0qGsMCKfwvJSmN6YV8brsbYN1a/nTmuQgfrGyg7p3WI4HRu1rs3rLvw=='
+			crossorigin='anonymous'></script>
+}
+
+@section Scripts{
+	<script type="importmap">
+		{
+			"imports": {
+				"vue": "https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.41/vue.esm-browser.prod.js",
+				"vue-router": "https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.1.5/vue-router.esm-browser.min.js",
+				"@@vue/devtools-api": "https://unpkg.com/@@vue/devtools-api@6.4.5/lib/esm/index.js"
+			}
+		}
+	</script>
+	<script type="module">
+		import { createApp, reactive, ref } from 'vue'
+		createApp({
+			setup() {
+
+				const datas = ref(null);
+
+				const getData = async () => {
+					try {
+						const response = await fetch('https://localhost:7016/api/Others/GetDeveloper')
+						datas.value = await response.json();
+					}
+					catch (err) {
+						throw Error(err);
+					}
+				}
+				getData();
+
+				const toggle = ref(true);
+				const hoverToggle = ref(false);
+				const slidesImg = ref([{ img: "NSL_Logo.png" }, { img: "LOGO-3.png" }])
+
+				return {
+					datas,
+					toggle,
+					hoverToggle,
+					slidesImg,
+				}
+			}
+		}).mount('#app')
+	</script>
+}

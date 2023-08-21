@@ -1,0 +1,253 @@
+﻿@{
+    ViewData["Title"] = "ApplyList";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherApply.TeacherApplyDto
+<!-- Title -->
+<section>
+    <div class="backplatform-page">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <h2 id="backTitle">教師資料維護</h2>
+            </div>
+
+        </div>
+        <hr />
+
+        <div class="container">
+            <div class="row">
+                <div class="col-7 ul-reset">
+                    <form>
+                        <input type="text" id="searchText" placeholder="請輸入要搜尋的關鍵字(姓名)" class="form-control d-inline-block" style="width:60%" />
+                        <button type="button" id="searchApply"
+                                class="btn-backedit margin-RL">
+                            搜尋
+                        </button>
+                        <button id="showAll" type="button" class="btn-backedit">顯示全部</button>
+                    </form>
+                </div>
+                <div class="col-5 padding-reset ps-5 pe-0 position-relative">
+                    <span class="span-backmember ">搜尋語言：</span>
+                    <select id="selectLan" name="selectLan" class="form-control div-login-form-input position-absolute end-0 mt-1">
+                        <option class="optionVal">請選擇</option>
+                    </select>
+                </div>
+            </div>
+            @*分頁*@
+            <nav aria-label="Page navigation example" class="margin-center d-inline">
+                <ul class="pagination d-flex" style="padding-left:40%">
+                    <li class="page-item pages">
+                        <a class="page-link" href="#" aria-label="Previous" onclick="PagePrevious()">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next" onclick="PageNext()">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="teachers-list">
+                <ul class="ul-reset wow fadeInUp">
+                    <li id="applyList">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script src="~/js/pagination.js"></script>
+    <script>
+        const url = "https://localhost:7016/api/TeachersApplies/GetAllApplyList"
+        const url2 = "https://localhost:7016/api/TeachersApplies"
+        const url3 = "https://localhost:7016/api/Others/Categories"
+
+        const ulTeacher = $("#applyList");
+        Load();
+        //自行指定
+        range=10
+
+        async function Load() {
+            const response = await fetch(url);
+            const datas = await response.json();
+            const teachers = teacherApplyList(datas);
+            ulTeacher.html(teachers.join(""))
+            checkStatus()
+            applyDelEvent();
+            LoadselectLan();
+            PageItem(datas) //Load的時候要渲染控制器
+        }
+        function teacherApplyList(datas) {
+            //獲得到的陣列要經過下面兩步驟串接,陣列長度要無條件進位
+            arrLenght = (Math.floor(datas.length))+1
+            pagination = Pagination(datas)
+            //依照原本步驟將pagination渲染出去
+            const teacherApply = pagination.map(teacher => {
+                let teacherIntro = teacher.intro !== null ? teacher.intro : "";
+                const verifyHtml = (teacher.statusName === "已審核") ?
+                                    `<button type="button" class="btn-backedit2 checkStatus" value="${teacher.id}" disabled="disabled" style="background-color:#cecece"> 驗證 </button>` :
+                                    `<button type="button" class="btn-backedit2 checkStatus" value="${teacher.id}"> 驗證 </button>`
+
+                let string = `<div class="div-backmember row ani-backcolor">
+                                        <div class="col-2 px-0">
+                                           <div class="div-triangle-number">
+                                              <span class="span-triangle-number">${teacher.id}</span>
+                                           </div>
+                                           <div class="div-circle mb-4">
+                                              <img class="pic-backmember" src='@Url.Content("~/uploads/")${teacher.imageName}' alt="teacher" title="teacherName"/>
+                                           </div>
+                                          </div>
+                                          <div class="col-8 div-backmemberde">
+                                              <div>
+                                                <p id="teacherName" class="p-backmember display-inline">${teacher.teacherName}</p>
+                                                <span class="span-backmember">${teacherIntro}</span>
+                                              </div>
+                                              <div>
+                                                <span class="span-backmember">語言類別：</span>
+                                                <span class="span-backmember">${teacher.categoryName}</span>
+                                              </div>
+                                              <div>
+                                                <span class="span-backmember">審核狀態：</span>
+                                                <span class="span-backmember">${teacher.statusName}</span>
+                                              </div>
+                                            </div>
+                                          <div class="col-2">
+                                            <form>
+                                              <a href='@Url.Content("~/BackTeacher/Application/")${teacher.id}' class="btn-backedit2">查看申請</a>
+                                                     ${verifyHtml}
+                                              <button type="button" class="btn-backedit2 deleteApply" value="${teacher.id}">刪除</button>
+                                            </form>
+                                          </div>
+                                        </div>`
+                return (string)
+            })
+            return teacherApply;
+
+        }
+
+        $("#showAll").on("click", async (e) => {
+            ulTeacher.empty();
+            Load();
+            applyDelEvent();
+            checkStatus()
+        })
+
+        function checkStatus() {
+            $(".checkStatus").on("click", function () {
+                const button = $(this); 
+                const id = button.val();
+
+                Swal.fire({
+                    title: '確定要審核通過嗎?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `@Url.Action("Verify", "BackTeacher")?teacherId=${id}`,
+                            type: 'POST',
+                            success: function (result) {
+                                Swal.fire('信件已寄出', "此老師已驗證", "success");
+                                ulTeacher.empty();
+                                Load();
+                            },
+                            error: function () {
+                                Swal.fire('提示', "此老師已是審核狀態", "error");
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        $("#searchApply").on("click", async (e) => {
+            ulTeacher.empty();
+            const response = await fetch(url + "?search=" + $("#searchText").val())
+            const datas = await response.json();
+            const teachers = teacherApplyList(datas);
+            ulTeacher.html(teachers.join(""))
+            applyDelEvent()
+            checkStatus()
+        })
+
+        $("#selectLan").on("change", async (e) => {
+            ulTeacher.empty();
+            if ($(".optionText:selected").val() == undefined) {
+                load()
+            }
+            const response = await fetch(url + "?searchLan=" + $(".optionText:selected").val())
+            const datas = await response.json();
+            const teachers = teacherApplyList(datas);
+            ulTeacher.html(teachers.join(""))
+            applyDelEvent()
+            checkStatus()
+        })
+
+        const selectLan = document.querySelector('#selectLan');
+        async function LoadselectLan() {
+            const response = await fetch(url3);
+            const datas = await response.json();
+            const categories = datas.map(category => {
+                return (`<option class="optionText" value="${category.id}">${category.name}</option>`)
+            })
+            selectLan.innerHTML = "<option>請選擇語言</option>" + categories.join("");
+        }
+
+        function applyDelEvent() {
+            $(".deleteApply").on("click", function () {
+                const id = $(this).val();
+
+                Swal.fire({
+                    title: '確定要刪除嗎?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "https://localhost:7016/api/TeachersApplies/DeleteApply" + "?teacherId=" + id,
+                            type: 'DELETE'
+                        }).done(function (data) {
+                            if (data.isSuccess) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '刪除成功！',
+                                    text: "編號為 " + id + " 的申請已成功刪除。"
+                                }).then((innerResult) => {
+                                    if (innerResult.isConfirmed) {
+                                        Load();
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '刪除失敗！',
+                                    text: data.errMsg || '刪除過程中發生了錯誤。'
+                                });
+                            }
+                        }).fail(function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '刪除失敗！',
+                                text: "無法刪除編號為 " + id + " 的申請。"
+                            });
+                        });
+                    }
+                });
+            });
+        }
+
+    </script>
+}
+

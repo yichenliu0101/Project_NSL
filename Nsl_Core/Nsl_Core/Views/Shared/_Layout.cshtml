@@ -1,0 +1,647 @@
+﻿@using Nsl_Core.Models.Dtos.Member.Login
+@using Nsl_Core.Models.Infra;
+@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+
+@inject IHttpContextAccessor Accessor
+@{
+    LoginDto? user = null;
+    string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+    string imageName = "";
+    if (token!=null)
+    {
+        user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+    }
+
+}
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="utf-8">
+    <meta name="title"
+          content="HyperExtra is a multipurpose agency template from LettStartDesign">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="LettStartDesign">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Never Stop Learning</title>
+
+    <!-- include the site Google Fonts stylesheet -->
+    <link href="~/css/css.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/boxicons.min.css">
+
+    <!-- include theme plugins setting stylesheet -->
+    <link rel="stylesheet" href="~/css/plugins.min.css">
+
+    <!-- include the site bootstrap stylesheet -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+
+    <!-- include the site stylesheet -->
+    <link rel="stylesheet" href="~/css/style.min.css">
+
+    <link rel="stylesheet" href="~/css/nsl.css">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- fullcalendar -->
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <!--sweetAlert-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- pageWrapper -->
+    <div class="page-wrapper">
+        <!-- pageHeader -->
+        <header id="pageHeader" class="page-header navbar-light">
+            <div class="header-inner header-margin">
+                <!-- mainLogo -->
+                <div class="logo">
+                    <a href="~/NSL/Index">
+                        <img src="~/picture/NSL_Logo.png"
+                             class="img-fluid logo-white title-pic"
+                             alt="NeverStopLearning">
+                    </a>
+                </div>
+                <!-- menuHolder -->
+                <div class="menu-holder">
+                    <!-- navbar -->
+                    <nav class="navbar navbar-expand-lg">
+                        <button class="navbar-toggler nav-opener"
+                                type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navBarOpener"
+                                aria-controls="navBarOpener"
+                                aria-expanded="false"
+                                aria-label="Toggle navigation">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <div class="collapse navbar-collapse"
+                             id="navBarOpener">
+                            <!-- navbar-nav -->
+                            <ul class="navbar-nav me-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/NSL/Index">首頁</a><!-- data-scroll-index -->
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Article/Index">最新消息</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/TeacherList/Index">老師一覽</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/TeacherApply/Index">成為老師</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/NSL/ContactUs">聯絡我們</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <nav class="navbar navbar-expand-lg menu-social-networks search-nav">
+                        <div style="width:150px">
+                            <form class="d-flex">
+                                <input type="search" placeholder="Search"
+                                       aria-label="Search"
+                                       class="form-control me-2 search-bar"
+                                       style="color:white">
+                                <button href="javascript:void(0);"
+                                        type="submit"
+                                        class="fas fa-search search-icon"></button>
+                            </form>
+                        </div>
+
+                    </nav>
+                    <!-- menu-social-networks -->
+                    <ul class="list-unstyled menu-social-networks mb-0">
+                        @if (user != null)
+                        {
+                            @* <form method="post">*@
+                            <li class="position-relative">
+                                <a href="javascript:void(0);"
+                                   class="cart-opener">
+                                    <i class="fas fa-shopping-cart"></i> <span class="icon fw-semibold" id="shoppingCartItem">0</span>
+                                </a>
+                                <!-- drop-sub -->
+                                <div class="drop-sub position-absolute">
+                                    <!-- side-widget -->
+                                    <div class="side-widget">
+                                        <!-- cart-row -->
+                                        <div class="cart-row position-relative" id="shoppingitems" name="shoppingcaritem">
+                                            
+                                        </div>
+                                        <!-- cart-row -->
+                                        <div class="cart-row position-relative">
+                                            購物車尚未有課程
+                                        </div>
+                                        <!-- cart-row -->
+                                        <div class="cart-row position-relative">
+                                           
+                                        </div>
+                                        <!-- cart-rowTotal -->
+                                        <div class="dflex-between-center text-white">
+                                            <span class="total-txt fw-semibold text-uppercase">Subtotal:</span>
+                                            <span class="total-price fw-semibold">
+                                                $
+                                                00.00
+                                            </span>
+                                        </div>
+                                        <span class="hr d-block my-15"></span>
+                                        <!-- cart-btn-row -->
+                                        <div class="cart-row-btn pt-2">
+                                            <a href="@Url.Action("OrderView","Cart")"
+                                               class="btn btn-white fw-semibold me-15" id="gotoshopcar">查看購物車
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-none d-lg-inline-block position-relative">
+                                <div class="dropdown dropdown-menu-end">
+                                    <a href="#" class="dropdown-toggle"
+                                    id="dropdownMenuLink"
+                                    aria-expanded="false"
+                                    data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-dark mt-3">
+                                        <li class="mt-1">
+                                            <div class="div-circle mx-auto" style="width:50px;height:50px;">
+                                                @if (user.ImageName == null) user.ImageName = "default.jpg";
+                                                <img src="@Url.Content("~/uploads/")@user.ImageName" class="pic-backmember">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="mt-2 dropdown-item-text">
+                                                <p class="text-center">
+                                                    @user.Name
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <hr style="margin: 0; padding:0" />
+                                        <li class="mt-1">
+                                            <a class="dropdown-item" href="~/Cart/OrderView
+">
+                                                查看購物車
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Index" asp-controller="Member">
+
+                                                進入會員首頁
+                                            </a>
+                                        </li>
+                                        @if (user.Role == 2)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Resume" asp-controller="Teacher">
+                                                    進入老師首頁
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (user.Role == 3)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" href="~/BackHome/Index">
+                                                    進入後臺首頁
+                                                </a>
+                                            </li>
+                                        }
+                                        <hr style="margin: 0; padding:0" />
+                                        <li>
+                                            <a class="dropdown-item" href='@Url.Content("~/NSL/SignOut")'>
+                                                登出
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            @* </form>*@
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href='@Url.Content("~/NSL/Register")'>註冊</a><!-- data-scroll-index -->
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Content("~/NSL/Login")">登入</a>
+                            </li>
+                        }
+                    </ul>
+                    <!-- side-navbar -->
+                </div>
+            </div>
+            <span class="side-over"></span>
+        </header>
+
+        @RenderBody()
+
+
+        <footer class="footer-area py-30">
+            <div class="container">
+                <div class="row flex-row-reverse align-items-center">
+                    <div class="col-sm-5">
+                        <!-- footer-social-networks -->
+                        <ul class="list-unstyled footer-social-networks d-flex justify-content-center justify-content-sm-end">
+                            <li>
+                                <a href="@ViewBag.Url"
+                                   class="fab fa-facebook-f"></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);"
+                                   class="fab fa-twitter"></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);"
+                                   class="fab fa-instagram"></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);"
+                                   class="fab fa-vimeo-v"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-7 text-center text-sm-start">
+                        <span class="text">
+                            © <span class="date">2023</span>
+                            NEVER STOP LEARNING Limited.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    @*對話框*@
+    <div class="mess collapse" id="mess">
+        <!-- 標題 -->
+        <div class="messtitle" id="messtitle">
+            <div class="px-2 py-1">
+                <button class="position-absolute top-0 pt-1 start-0 messbtn previousbtn px-0" style="width:16px;height:16px">＜</button>
+                <span id="messMemberTitle" class="ps-3"></span>
+                <button class="position-absolute top-0 end-0 messbtn closebtn">x</button>
+            </div>
+        </div>
+        <!-- 訊息 -->
+        <div class="messtext" id="messtext">
+        </div>
+        <!-- 輸入框 -->
+        <div class="messbottom container">
+            <div class="row mt-1">
+                <div class="col-10">
+                    <input type="text" class="form-text messinput ps-1 form-control pe-0" style="max-height:26px" value="" id="message">
+                </div>
+                <div class="col-2 px-0">
+                    <button class="position-absolute top-4 end-5 messbtn px-0" id="enter" onclick="Cummit()"><span class="px-0" style="font-size:14px;color:slategray">送出</span></></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*對話框list*@
+    <div class="mess collapse" id="messlist">
+        <!-- 標題 -->
+        <div class="messtitle">
+            <div class="px-2 py-1">
+                <span>訊息一覽</span>
+                <button class="position-absolute top-0 end-0 messbtn closebtn">x</button>
+            </div>
+        </div>
+        <!-- 訊息 -->
+        <div class="messtext" id="messlistnum">
+            
+        </div>
+    </div>
+
+
+    @*提示icon*@
+    <div class="div-hinibtn">
+        <button type="button" class="position-relative hinibtn data-bs-target" id="hinibtn">
+            訊息
+        </button>
+    </div>
+
+
+    @*	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <!-- include app plugin JavaScript -->
+    <script src="~/js/plugins.min.js"></script>
+    <!-- include app JavaScript -->
+    <script src="~/js/app.min.js"></script>
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- 浮動效果 -->
+    <script src="~/js/vanilla-tilt.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+
+    @*驗證登入*@
+    @{
+        if (TempData.ContainsKey("Login"))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '登入成功',
+                    text: '@TempData["Login"]',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+        }
+    }
+
+    @*Line註冊快速登入*@
+    @{
+        if (TempData.ContainsKey("LineFastLogin"))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '註冊成功',
+                    text: '@TempData["LineFastLogin"]',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+        }
+    }
+
+    @*驗證教師履歷*@
+    @{
+        if (TempData.ContainsKey("EditTeacherResume"))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '編輯完成',
+                    text: '@TempData["EditTeacherResume"]',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+        }
+    }
+
+    @*忘記密碼*@
+    @{
+        if (TempData.ContainsKey("ForgetPassword"))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '寄送成功',
+                    text: '@TempData["ForgetPassword"]',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+        }
+    }
+
+    @*驗證註冊*@
+    @{
+        if (TempData.ContainsKey("VerifyMember"))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '註冊成功',
+                    text: '@TempData["VerifyMember"]',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+        }
+    }
+
+    @*驗證錯誤*@
+    @{
+        if (TempData.ContainsKey("ErrMessage"))
+        {
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: '發生錯誤',
+                    text: '@TempData["ErrMessage"]',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+        }
+    }
+
+    @*身分驗證*@
+    @{
+        string? roleVerify = Accessor.HttpContext.Session.GetString("RoleVerify");
+        if (roleVerify!=null)
+        {
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: '權限不足',
+                    text: '@roleVerify',
+                    confirmButtonColor: '#d4b068',
+                })
+            </script>
+
+            Accessor.HttpContext.Session.Remove("RoleVerify");
+        }
+    }
+    @*購物車內容新增*@
+    @{
+        if (user != null)
+        {
+            <script>
+
+                $(function () {
+                    console.log(@user.Id);
+                    GetShopingCart();
+                });
+
+                function GetShopingCart() {
+                    $.ajax({
+                        dataType: 'json',
+                        type: "GET",
+                        url: 'https://localhost:7016/api/ShoppingCarts/FindShoppingCart?memberId=@user.Id',
+                        async: false,
+                        success: function (data) {
+                            console.log("API 回應：", data);
+
+                            var Sum = 0;
+                            var TotalAmt = 0;
+                            if (data.length > 0) {
+
+                                $('.side-widget').empty();
+
+                                for (var k in data) {
+                                    var record = data[k];
+                                    var amt = data[k].price * data[k].count;
+                                    //組cart-row
+                                    var row = '<div class="cart-row position-relative" style="overflow:auto" id="shoppingitems" name="shoppingcaritem"><div></div><a href="javascript:void(0);" class="img"><img src="/uploads/' + record.imageName + '" alt="image description" class="img-fluid"></a><div class="text-desc ms-15"><span class="title fw-semibold d-block mb-1"><a href="javascript:void(0);">' + record.title + '</a></span><span class="price font-roboto d-block">$' + data[k].price + '  *  ' + data[k].count + '</span></div><span><a href="javascript:void(0);" class="position-absolute fa fa-times</a></div>';
+                                    $('.side-widget').append(row);
+
+                                    Sum = Sum + data[k].count;
+                                    TotalAmt = TotalAmt + amt;
+                                }
+
+                                //加total列
+                                var totalrow = '<div class="dflex-between-center text-white"><span class="total-txt fw-semibold text-uppercase">小計:</span><span class="total-price fw-semibold">$ ' + TotalAmt + '</span></div><span class="hr d-block my-15"></span>';
+                                $('.side-widget').append(totalrow);
+                                //加按鈕列
+                                var btnrow = '<div class="cart-row-btn pt-2"><a href="@Url.Action("OrderView","Cart")" class="btn btn-white fw-semibold me-8">查看購物車</a></div>';
+                                $('.side-widget').append(btnrow);
+
+                                //更新購物車上數字
+                                $('#shoppingCartItem').text(data.length);
+                            }
+                        },
+                        error: function (jqXHR) {
+                            alert('error', jqXHR.responseText);
+                        }
+                    })};
+
+            </script>
+        }
+      
+    }
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        const messMemberTitle = document.querySelector("#messMemberTitle")
+        const messtext = document.getElementById("messtext")
+        //登入資訊
+        @{
+            string memberId = "";
+            if (user != null) memberId = user.Id.ToString();
+        }
+
+        //控制項事件
+        $("#hinibtn").on("click", function () {
+            $("#messlist").addClass("collapse.show").removeClass("collapse")
+            $("#hinibtn").hide()
+        })
+        //回到list
+        $(".previousbtn").on("click", function () {
+            $(".mess").addClass("collapse").removeClass("collapse.show")
+            $("#messlist").addClass("collapse.show").removeClass("collapse")
+            GetList()
+        })
+        //關閉對話
+        $(".closebtn").on("click", function () {
+            $(".mess").addClass("collapse").removeClass("collapse.show")
+            $("#hinibtn").show()
+        })
+        //進入detail
+        $("#messlistnum").on("click", "div", function () {
+            $("#mess").addClass("collapse.show").removeClass("collapse")
+            $("#messlist").addClass("collapse").removeClass("collapse.show")
+        })
+
+        //keydown enter事件
+        $("#message").on("keydown", function Enter(e) {
+            let key = window.event ? e.keyCode : e.which;
+            if (key === 13) {
+                e.preventDefault()
+                $('#enter').click()
+            }
+        })
+
+
+        //更新list事件
+        async function GetList() {
+            const re = await fetch(`https://localhost:7016/api/Others/Chat?senderid=` + "@memberId")
+            const data = await re.json();
+            const list = data.map(item => {
+                return (`<div class="messlist messtext-t messclick listitem" value="${item.chatMemberId}">
+                                                                                <p class="my-0 font-title-text">${item.name}</p>
+                                                                                <p class="my-0">${item.list[item.lastMessageIndex].messageText}</p>
+                                                                            </div>`)
+            })
+            console.log($(".listitem"))
+            $(".listitem").remove()
+            $("#messlist").append(`${list.join("")}`)
+            //註冊前往detail事件
+            $(".messclick").on("click", (e) => {
+                $("#mess").addClass("collapse.show").removeClass("collapse")
+                $("#messlist").addClass("collapse").removeClass("collapse.show")
+                GetMessage(e.currentTarget.getAttribute("value"))
+            })
+        }
+        GetList()
+        
+        //更新detail事件
+        async function GetMessage(chatMemberId) {
+            const re = await fetch(`https://localhost:7016/api/Others/MessageDetail?senderid=` + "@memberId" + "&chatMemberId=" + `${chatMemberId}`)
+            const data = await re.json();
+            const detail = data.map(item => {
+                if (chatMemberId == item.senderId) {
+                    messMemberTitle.innerHTML = `${item.senderName}`
+                    return (`<div class='messtext-t'><span class='speech-bubble-t'>${item.messageText}</span></div>`)
+                }
+                else {
+                    messMemberTitle.innerHTML = `${item.recipientName}`
+                    return (`<div class='messtext-m'><span class='speech-bubble-m'>${item.messageText}</span></div>`)
+                }
+            })
+            $("#messtitle").attr("value", `${chatMemberId}`)
+            $("#messtext").empty().append(`${detail.join("")}`)
+            messtext.scrollTop = messtext.scrollHeight
+        }
+
+        //連線Chat
+        let connection = new signalR.HubConnectionBuilder().withUrl('/ChatHub').build()
+        connection.start().then(function () {
+            console.log("Hub 連線完成");
+        }).catch(function (err) {
+            alert('連線錯誤: ' + err.toString())
+        });
+
+        //傳送訊息
+        function Cummit() {
+            let message = $('#message').val()
+            if(message!=""){
+                $("#messtext").append(`<div class='messtext-m'><span class='speech-bubble-m'>${message}</span></div>`)
+                messtext.scrollTop=messtext.scrollHeight
+                let sendToID = $("#messtitle").attr("value");
+                connection.invoke("SendMessage", message, sendToID).catch(function (err) {
+                    alert('傳送錯誤: ' + err.toString())
+                })
+                $('#message').val("")
+            }
+        }
+
+        //更新訊息時觸發
+        connection.on("UpdContent", function (msg,senderId) {
+            GetList()
+            GetMessage(senderId)
+            messtext.scrollTop = messtext.scrollHeight
+        })
+
+        //聯絡學生、老師事件
+        function messTo(id, name) {
+            $("#messtitle").attr("value", id);
+            $("#mess").addClass("collapse.show").removeClass("collapse")
+            $("#messlist").addClass("collapse").removeClass("collapse.show")
+            $("#hinibtn").hide()
+            //抓name改title
+            messMemberTitle.innerHTML = name
+            //更新內容
+            GetMessage(id)
+            messtext.scrollTop = messtext.scrollHeight
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                console.log(location.pathname.toLowerCase())
+                if (link.getAttribute('href').toLowerCase() === location.pathname.toLowerCase()) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        })
+    </script>
+</body>
+</html>

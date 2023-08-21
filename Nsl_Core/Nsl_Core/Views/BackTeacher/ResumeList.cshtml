@@ -1,0 +1,163 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "ResumeList";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.BackTeacherResumeDto
+<section>
+    <div class="backplatform-page">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <h2 id="backTitle">教師資料維護</h2>
+            </div>
+
+        </div>
+        <hr />
+
+        <div class="container">
+            <div class="row">
+                <div class="col-7 ul-reset">
+                    <form>
+                        <input type="text" placeholder="請輸入要搜尋的關鍵字(姓名或信箱)" id="searchText" class="form-control d-inline-block" style="width:60%" />
+                        <button type="button"
+                                class="btn-backedit margin-RL" id="searchResume">
+                            搜尋
+                        </button>
+                        <button type="button" class="btn-backedit" id="showAll">顯示全部</button>
+                    </form>
+                </div>
+            </div>
+            <div class="teachers-list">
+                <ul class="ul-reset wow fadeInUp" id="resumeList">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{
+    <script src="~/js/pagination.js"></script>
+    <script>
+        url = "https://localhost:7016/api/TeachersResumes/GetResumeList"
+
+        const ulTeacher = $("#resumeList");
+
+        Load()
+
+        async function Load() {
+            const response = await fetch(url);
+            const datas = await response.json();
+            const teachers = teacherResumeList(datas);
+            ulTeacher.html(teachers.join(""))
+            ResumeDelEvent()
+        }
+
+        function teacherResumeList(datas) {
+            console.log(datas.length)
+            let pagination = Pagination(datas)
+            console.log(pagination)
+            const teacherResume = pagination.map(teacher => {
+                let avgSatisfactionDisplay = teacher.satisfaction !== null ? teacher.satisfaction.toFixed(1) : '尚無評論';
+                let string = `<li>
+                                <div class="div-backmember row ani-backcolor">
+                                    <div class="col-2 mb-4 px-0">
+                                        <div class="div-triangle-number">
+                                            <span class="span-triangle-number">${teacher.teacherId}</span>
+                                        </div>
+                                        <div class="div-circle">
+                                            <img class="pic-backmember" src='@Url.Content("~/uploads/")${teacher.imageName}' alt="teacher" title="teacherName" />
+                                        </div>
+                                    </div>
+                                    <div class="col-2 div-backmemberde">
+                                        <p class="p-backmember">${teacher.name}</p>
+                                        <span class="span-backmembertitle span-color">已完成課堂數：</span>
+                                        <span class="span-backmember">${teacher.finishCount}</span>
+                                        <br>
+                                        <span class="span-backmembertitle span-color">未完成課堂數：</span>
+                                        <span class="span-backmember">${teacher.unfinishedCount}</span>
+                                    </div>
+                                    <div class="col-4 div-backmemberde2">
+                                        <span class="span-backmembertitle span-color">電子信箱：</span>
+                                        <br>
+                                        <span class="span-backmember">${teacher.email}</span>
+
+                                    </div>
+                                    <div class="col-2 div-backmemberde3">
+                                        <span class="span-backmembertitle span-color">課程滿意度：</span>
+                                        <input type="text" class="form-control div-login-form-input" style="text-align:center" value="${avgSatisfactionDisplay}" readonly>
+                                    </div>
+                                    <div class="col-2 div-backmemberde3">
+                                        <form>
+                                        <a href='@Url.Content("~/BackTeacher/CAU/")${teacher.teacherId}' class="btn-backedit2">查看</a>
+                                        <button type="button" class="btn-backedit deleteResume" value=${teacher.teacherId}>刪除</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </li>`
+                return (string)
+            })
+            return teacherResume;
+
+        }
+
+
+        $("#showAll").on("click", async (e) => {
+            ulTeacher.empty()
+            Load()
+            ResumeDelEvent()
+        })
+
+        $("#searchResume").on("click", async (e) => {
+            ulTeacher.empty();
+            const response = await fetch(url + "?search=" + $("#searchText").val())
+            const datas = await response.json();
+            const teachers = teacherResumeList(datas);
+            ulTeacher.html(teachers.join(""))
+            ResumeDelEvent()
+        })
+
+        function ResumeDelEvent() {
+            $(".deleteResume").on("click", function () {
+                const teacherId = $(this).val();
+
+                Swal.fire({
+                    title: '確定要刪除嗎?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `https://localhost:7016/api/TeachersResumes/DeleteResume` + "?teacherId=" + teacherId,
+                            type: 'DELETE'
+                        }).done(function (data) {
+                            if (data.isSuccess) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '刪除成功！',
+                                    text: "編號為 " + teacherId + " 的履歷已成功刪除。"
+                                });
+                                Load();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '刪除失敗！',
+                                    text: `${data.errMsg}`
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+}

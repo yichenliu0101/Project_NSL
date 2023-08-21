@@ -1,0 +1,131 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@inject IHttpContextAccessor Accessor
+@{
+    LoginDto? user = null;
+    string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+    if (token != null)
+    {
+        user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+    }
+    else
+    {
+        user = new LoginDto() { Id = 0 };
+    }
+}
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="col-12" id="calendar"></div>
+
+<script>
+    const calendar = document.querySelector("#calendar");
+    async function getData(){
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridWeek',
+                events: {
+                    url: `https://localhost:7016/api/Tutor/TeacherTutorPeriod?teacherId=${@ViewBag.Id}`,
+                    method: 'GET',
+                    failure: function () {
+                        alert('there was an error while fetching events!');
+                    },
+                },
+                eventClick:function(info){
+                    if (info.event.title === '已預約') {
+                        return;
+                    }
+                    @if (user.Id == 0) {
+                        @:Swal.fire({
+                           @:icon: 'warning',
+                           @:title: '無法選擇此課程！',
+                           @:text: '請先登入帳號再選擇！',
+                           @:confirmButtonText: '前往登入頁',
+                           @:showCancelButton: true,
+                           @:cancelButtonText: '再看看',
+                        @:}).then(result => {
+							@:if (result.isConfirmed) {
+                                @:window.location.href="@Url.Content("~/NSL/Login")";
+							@:}
+                        @:})
+                        @:return
+                    }
+                    const starttime = formatDate(info.event.start)
+                    Swal.fire({
+                        title: '操作確認',
+                        text: `要加入購物車嗎？`,
+                        showCancelButton: true,
+                        confirmButtonText: '確定',
+                        cancelButtonText: '取消',
+                        }).then(result=>{
+                            if(result.isConfirmed){
+                                //1.ajax呼叫API存入資料
+                                //需寫入的物件
+                                var formData = {};
+                                formData.memberId = @user.Id;
+                                formData.teacherId = @ViewBag.Id;
+                                formData.count = 0;
+                                formData.title = '';
+                                formData.price = 0;
+                                formData.imageName = '';
+
+                                console.log(formData);
+
+                                $.ajax({
+                                    dataType: 'json',
+                                    type: "POST",
+                                    url: "https://localhost:7016/api/ShoppingCarts/CreateShoppingCart",
+                                    async: false,
+                                    data: JSON.stringify(formData),
+                                    contentType: 'application/json;', // 要送到server的資料型態
+                                    success: function (result) {
+                                        console.log("API 回應：", result);
+                                        if (result.isSuccess == true) {
+                                            //2.ajax success後,ajax呼叫api抓此人的購物車資訊
+
+                                            GetShopingCart();
+                                        }
+                                    },
+                                });
+                                GetShopingCart();
+                            }
+                        })
+                    },
+                eventTimeFormat: { // like '14:30:00'
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    meridiem: false,
+                    hour12: false
+                },
+
+            });
+            calendar.render();
+        });
+    }
+
+    function formatDate(date) {
+        if (date == null) {
+            return "";
+        }
+        let d = new Date(date),
+            hour = '' + d.getHours(),
+            minute = '' + d.getMinutes(),
+            second = '' + d.getMinutes();
+
+        if (hour.length < 2)
+            hour = '0' + hour;
+        if (minute.length < 2)
+            minute = '0' + minute;
+        if (second.length < 2)
+            second = '0' + second;
+        return [hour, minute, second].join(':');
+    }
+
+    
+    getData()
+</script>

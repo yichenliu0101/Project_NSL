@@ -1,0 +1,152 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.TeacherTutorRecordDto
+<div class="col-lg-12" id="calendar"></div>
+
+<script>
+	let getPeriodUrl = `https://localhost:7016/api/Tutor/GetTeacherTutorPeriodData?teacherId=${@Model.TeacherId}`;
+	const calendarEl = document.getElementById('calendar');
+	const calendar = new FullCalendar.Calendar(calendarEl, {
+		initialView: 'dayGridMonth',
+		headerToolbar: {
+			left: 'showAllBtn,createCourseBtn',
+			center: 'title',
+			right: 'prev,next dayGridMonth,timeGridWeek'
+		},
+		customButtons: {
+			showAllBtn: {
+				text: "",
+				click: function () {
+					if ($(this).html() == "顯示全部") {
+						$(this).html('顯示已預約')
+					}
+					else {
+						$(this).html("顯示全部")
+					}
+					calendar.refetchEvents();
+					calendar.render();
+				}
+			},
+			createCourseBtn: {
+				text: "新增課程",
+				click: function () {
+					$("#createCourseModal").modal("toggle");
+				}
+			}
+		},
+		events: {
+			url: getPeriodUrl,
+			method: 'GET',
+			failure: function () {
+				alert('there was an error while fetching events!');
+			},
+		},
+		eventDidMount:function(event){
+			if ($(".fc-showAllBtn-button").text() !== '顯示全部') {
+				if (event.event.title === "未預約") {
+					event.el.style.display = "none";
+				}
+			}
+		},
+		buttonText: {
+			month: '月',
+			week: '週',
+		},
+		filterResourcesWithEvents: true,
+		allDaySlot: false,
+		eventClick: function (info) {
+			if(info.event.title!='未預約'){
+				Swal.fire({
+					icon: 'error',
+					title: '刪除失敗！',
+					text: '不能刪除已預約的課程'
+				})
+				return
+			}
+			const starttime = formatDate(info.event.start)
+			Swal.fire({
+				icon:'warning',
+				title: '刪除排程',
+				text: `確定要刪除${starttime}這段時間嗎`,
+				showCancelButton: true,
+				confirmButtonText: '確定',
+				cancelButtonText: '取消',
+			}).then(result => {
+				if (result.isConfirmed) {
+					try {
+						const delFormData = { TeacherId: @Model.TeacherId, StartTime: info.event.start }
+						const deleteUrl = "https://localhost:7016/api/Tutor/DeleteCourse";
+						$.ajax({
+							url: deleteUrl,
+							type: 'DELETE',
+							contentType: 'application/json',
+							data: JSON.stringify(delFormData),
+						}).done(function (data) {
+							if (data.isSuccess) {
+								Swal.fire({
+									icon: 'success',
+									title: '刪除成功！',
+									text: '刪除課程成功！',
+								}).then(result => {
+									if (result.isConfirmed) {
+										$('#closeModal').click();
+										calendar.refetchEvents();
+									}
+								})
+
+							}
+							else {
+								throw (data.errMsg);
+							}
+						})
+					}
+					catch (e) {
+						Swal.fire({
+							icon: 'error',
+							title: '刪除失敗！',
+							text: e
+						})
+					}
+				}
+			})
+		},
+		eventTimeFormat: { // like '14:30:00'
+			hour: 'numeric',
+			minute: '2-digit',
+			meridiem: false,
+			hour12: false
+		},
+
+	});
+	async function GetTeacherPeriod() {
+		document.addEventListener('DOMContentLoaded', function () {
+			calendar.render();
+			$(".fc-showAllBtn-button").click();
+		});
+	}
+
+	GetTeacherPeriod();
+
+	function formatDate(date) {
+		if (date == null) {
+			return "";
+		}
+		let d = new Date(date),
+			hour = '' + d.getHours(),
+			minute = '' + d.getMinutes(),
+			second = '' + d.getMinutes();
+
+		if (hour.length < 2)
+			hour = '0' + hour;
+		if (minute.length < 2)
+			minute = '0' + minute;
+		if (second.length < 2)
+			second = '0' + second;
+		return [hour, minute, second].join(':');
+	}
+</script>

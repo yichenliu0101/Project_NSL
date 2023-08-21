@@ -1,0 +1,93 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Nsl_Core.Models.EFModels.Articles
+@{
+    ViewData["Title"] = "Detail";
+}
+
+<section>
+	<div class="img-fluid banner-box">
+		<img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height">
+	</div>
+</section>
+<section class="block-padding">
+	<div class="container margin-TB">
+		<div class="row align-items-center">
+			<div class="col-md-10 col-lg-10 mb-30 wow fadeInUp margin-center" data-wow-duration="600ms">
+				<div class="about-block active">
+					<h3>@Model.Title</h3>
+
+					<P class="font-right">@Model.ModifiedTime</P>
+
+					<hr>
+					<figure class="figure-article text-center">
+						<img src="~/picture/@Model.Picture" alt="article"
+							 title="article" />
+					</figure>
+					<p class="article-text">
+						@Model.ArticleContent
+					</p>
+
+					<hr>
+					<ul class="list-unstyled footer-social-networks d-flex justify-content-center margin-TB">
+						<li><span>分享文章</span></li>
+						<li>
+							<a href="https://www.facebook.com/sharer.php?u=http://127.0.0.1:5500/articleDetails.html"
+							   class="fab fa-facebook-f"></a>
+						</li>
+						<li>
+							<a href="https://twitter.com/share?text=文字&url=http://127.0.0.1:5500/articleDetails.html"
+							   class="fab fa-twitter"></a>
+						</li>
+						<li>
+							<a href="http://instagram.com/sharer.php?u=http://127.0.0.1:5500/articleDetails.html&media=static\picture\teacher1.jpg&description=ネコの日本語教室🫧日商特助多年經驗｜獨學技巧｜打好基礎讓你開口不緊張"
+							   class="fab fa-instagram"></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+@section Scripts{
+	<script>
+		const addUl = document.querySelector("#addUl")
+
+		async function GetArticles() {
+			const re = await fetch(`https://localhost:7016/api/Articles`)
+			const data = await re.json();
+			const articles = data.map(item => {
+				return (`<li><a href='@Url.Content("~/Article/Detail/")${item.id}'>
+								<div class="div-article-col row ani-backcolor">
+															<div class="col-lg-2">
+																						<img class="pic-backmemberCAU" src='@Url.Content("~/uploads/")${item.picture}'
+																	 alt="teacher" title="teacherName" />
+															</div>
+															<div class="col-lg-10 row">
+																<div class="col-lg-12">
+																	<p class="ri-p-title">
+																				${item.title}
+																	</p>
+																	<p class="p-text col-lg-12  display-inline">
+																						${item.articleContent}
+																	</p>
+																</div>
+																<div class="col-lg-12 span-article-time">
+																	<span>
+																		最後編輯時間：
+																	</span>
+																	<span>
+																						${item.modifiedTime}
+																	</span>
+																</div>
+															</div>
+														</div></a></li>`)
+			})
+		}
+
+		GetArticles();
+
+	</script>
+}

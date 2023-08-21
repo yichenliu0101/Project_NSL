@@ -1,0 +1,85 @@
+﻿@model Nsl_Core.Models.Dtos.Website.ArticleDto
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "ArticleCreate";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+
+<!-- Title -->
+<section>
+    <div class="backplatform-page">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <a id="demoA"><h2 id="backTitle">最新消息維護</h2></a>
+            </div>
+
+        </div>
+        <hr />
+        <div class="container">
+            <form name="formData" enctype="multipart/form-data" method="post">
+                <div class="mt-3 my-5">
+                    <p class="me-2 p-backmember mt-5" style="font-weight: bolder">標題：</p>
+                    <input type="text" class="form-control" id="title" placeholder="請輸入標題"
+                           style="display: inline-block; width:100%" name="Title" />
+                </div>
+
+                <div>
+                    <div class="my-3 my-5">
+                        <p class="me-2 p-backmember" style="font-weight: bolder">封面圖片：</p>
+                        <input type="file" id="file" name="Picture" />
+                    </div>
+                    <div>
+                        <div>
+                            <img id="img" src='@Url.Content("~/picture/ArticleDefault.jpg")' class="pic-articleCAU" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="my-3 my-5">
+                    <p class="me-2 p-backmember" style="font-weight: bolder">內文：</p>
+                    <textarea name="ArticleContent" class="div-article-textarea" id="text"></textarea>
+                </div>
+                <div class="">
+                    <!-- 這裡要改，返回上一頁，或是引導到教師頁面 -->
+                    <button type="submit" class="btn btn-primary" id="submit">儲存</button>
+                    <!-- 這裡要改，返回上一頁，或是引導到教師頁面 -->
+                    <a class="btn btn-primary" href="~/BackMaintain/ArticleIndex">取消</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        const file = document.querySelector("#file")
+        const img = document.querySelector("#img")
+        const submit = document.querySelector("#submit")
+
+        $("#file").on('change', function (e) {
+            const file = this.files[0];
+            if (onchange == null) {
+                $("#img").attr("src", null);
+            }
+            const fr = new FileReader();
+            fr.onload = function (e) {
+                $("#img").attr("src", e.target.result);
+            };
+
+            fr.readAsDataURL(file);
+        });
+
+        $("#demoA").on("click", function () {
+            $("#title").val("我終於遇到了完美的韓語老師")
+            $("#text").val("學習了很久的韓語，一開始的發音是自學，後來到補習班開始學習了好幾年的韓語，發現自己的口說非常不流利，因為班上學生很多，能分配到的練習時間很少，又時常因為講得不好，或是想太久，怕浪費同學時間，所以漸漸不敢開口。在AT上面，找過許多老師，但基本上都是以教科書為基礎進行教學，但是其實那些內容我都已經學過，只不過在口說時用不出來，這次終於遇到了了解我需求的老師 하다쌤！老師會先了解學習需求，也會評估學生目前的韓語實力，安排課程進度。我和老師說我討厭教科書，因為內容非常無聊，學了沒有動力，於是，老師說那就每次安排一個主題，在課堂進行討論。")
+        })
+    </script>
+}

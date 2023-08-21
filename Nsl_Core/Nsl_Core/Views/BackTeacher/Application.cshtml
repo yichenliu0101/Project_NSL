@@ -1,0 +1,227 @@
+﻿@{
+	ViewData["Title"] = "TeacherApplication";
+	Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherApply.TeacherApplyDto
+<section>
+	<div class="backplatform-page">
+		<!-- navbar -->
+		<div class="open-sidenav-btn" id="navbarOpen">
+			&#9776;
+		</div>
+
+		<div class="backplatform-main">
+			<div class="backplatform-title">
+				<h2 id="backTitle">教師資料維護</h2>
+			</div>
+
+		</div>
+		<hr />
+		<div class="container wow fadeInUp">
+			<p class="font30px text-center">申請內容</p>
+			<div id="applyList"class="row align-items-center">
+				<div class="col-md-7 col-lg-7 mb-30 wow fadeInUp" data-wow-duration="600ms">
+					<div class="container text-center mt-3">
+						<form>
+							<div class="font20px">
+
+								<div class="row my-1">
+									<div class="col-6 text-right">
+										<label class="me-2">姓名：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.TeacherName</label>
+									</div>
+								</div>
+
+								<div class="row my-1">
+									<div class="col-6 text-right">
+										<label class="me-2">主要教學語言：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.CategoryName</label>
+									</div>
+								</div>
+
+								<div class="row my-1">
+									<div class="col-6 text-right">
+										<label class="me-2">可溝通語言：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.LanguageName</label>
+									</div>
+								</div>
+
+								<div class="row my-1">
+									<div class="col-6 text-right">
+										<label class="me-2">教學經驗：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.TutorExperienceName</label>
+									</div>
+								</div>
+
+								<div class="row my-2">
+									<div class="col-6 text-right">
+										<label class="me-2">工作狀態：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.WorkStatusName</label>
+									</div>
+								</div>
+
+								<div class="row my-2">
+									<div class="col-6 text-right">
+										<label class="me-2">一周可教學時間：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.TutorHoursOfWeekName</label>
+									</div>
+								</div>
+
+								<div class="row my-2">
+									<div class="col-6 text-right">
+										<label class="me-2">月收入目標：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<label class="me-2 span-coloronly">@Model.RevenueTargetName</label>
+									</div>
+								</div>
+
+								<div class="row my-2">
+									<div class="col-6 text-right">
+										<label class="me-2">簡短自介：</label>
+									</div>
+									<div class="col-6 div-backcoupon text-start">
+										<textarea class="form-control" name="textarea" placeholder="請輸入內文"
+												  style="height:150px;display: inline-block; width:70%" readonly>@Model.Intro</textarea>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="col-5 div-backteacherCAU">
+					<img src="~/uploads/@Model.ImageName" alt="members" class="pic-backmemberCAU">
+				</div>
+				<div class="mt-4 ms-2 row text-center justify-content-center">
+					<div class="mx-auto px-3 display-inline">
+						<a href="~/BackTeacher/ApplyList" class="btn btn-primary">回上一頁</a>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</section>
+@section Scripts{
+	<script>
+		const url = "https://localhost:7016/api/TeachersApplies/GetApply"
+
+		const ulTeacher = $("#applyList");
+
+		//teacherApply()
+		
+		//async function teacherApply() {
+		//	const response = await fetch(url + "?teacherId=" + @Model.Id)
+		//	const datas = await response.json();
+		//	console.log(datas)
+		//	const teacherApply = datas.map(teacher => {
+		//		let string = `				<div class="col-md-7 col-lg-7 mb-30 wow fadeInUp" data-wow-duration="600ms">
+		//					<div class="container text-center mt-3">
+		//						<form>
+		//							<div class="font20px">
+
+		//								<div class="row my-1">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">姓名：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">Jennie</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-1">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">主要教學語言：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">英文</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-1">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">可溝通語言：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">英文、中文、日文</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-1">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">教學經驗：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">曾有3年面對面教學經驗</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-2">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">工作狀態：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">我有其他兼職工作</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-2">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">一周可教學時間：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">25~35 小時</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-2">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">月收入目標：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<label class="me-2 span-coloronly">NT$90000~NT$135000</label>
+		//									</div>
+		//								</div>
+
+		//								<div class="row my-2">
+		//									<div class="col-6 text-right">
+		//										<label class="me-2">簡短自介：</label>
+		//									</div>
+		//									<div class="col-6 div-backcoupon text-start">
+		//										<textarea class="form-control" name="textarea" placeholder="請輸入內文"
+		//												  style="height:150px;display: inline-block; width:70%" readonly>你好我是誰誰誰，有3年家教經驗，主教英文</textarea>
+		//									</div>
+		//								</div>
+		//							</div>
+		//						</form>
+		//					</div>
+		//				</div>
+		//				<div class="col-5 div-backteacherCAU">
+		//					<img src='@Url.Content("~/uploads/")${teacher.ImageName}' alt="members" class="pic-backmemberCAU">
+		//				</div>
+		//				<div class="mt-4 ms-2 row text-center justify-content-center">
+		//					<div class="mx-auto px-3 display-inline">
+		//						<button type="submit" class="btn btn-primary">確定</button>
+
+		//						<a href="~/BackTeacher/ApplyList" class="btn btn-primary"
+		//						   style="margin-left: 10%;">回上一頁</a>
+		//					</div>
+		//				</div>`
+		//		return (string)
+		//	})
+		//	ulTeacher.html(teacherApply.join(""))
+		//}
+	</script>
+}

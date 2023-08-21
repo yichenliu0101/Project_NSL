@@ -1,0 +1,108 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	ViewData["Title"] = "ArticleIndex";
+	Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+<!-- Title -->
+<section>
+	<div class="backplatform-page">
+		<!-- navbar -->
+
+		<div>
+			<div class="teachers-list" id="app">
+				<div class="open-sidenav-btn" id="navbarOpen">
+					&#9776;
+				</div>
+
+				<div class="backplatform-main">
+					<div class="backplatform-title">
+						<h2 id="backTitle">最新消息維護</h2>
+					</div>
+
+				</div>
+				<hr />
+
+				<div>
+					<div class="row text-center span-color div-border-right">
+						<div class="col-5 div-border-left">
+							<p>文章標題</p>
+						</div>
+						<div class="col-5 div-border-left">
+							<p>文章內容</p>
+						</div>
+						<div class="col-2 div-border-left">
+							<a class="btn btn-primary" href="~/BackMaintain/ArticleCreate">新增文章</a>
+						</div>
+					</div>
+				</div>
+				<ul class="ul-reset" id="backAddUl" v-for="item in items">
+					<li>
+						<div class="row ani-backcolor h-100">
+							<div class="col-2 mb-3 h-100 text-center">
+								<div class="div-backarticle-pic">
+									<img class="pic-backarticleCAU" :src=`@Url.Content("~/uploads/")${item.picture}`
+										 alt="teacher" title="teacherName" />
+								</div>
+							</div>
+							<div class="col-3 div-backmemberde ps-0 text-truncate">
+								<span class="span-backmember">{{item.title}}</span>
+							</div>
+
+							<div class="col-5 div-backmemberde div-leftdash pe-0 text-truncate">
+								<span class="span-backmember" name="articleList">{{item.articleContent}}</span>
+							</div>
+
+							<div class="col-2 div-backmemberde3 mt-0">
+								<form class="text-center">
+									<a :href=`@Url.Content("~/BackMaintain/ArticleUpdate/")${item.id}` class="btn btn-backedit" value="${item.id}">編輯</a>
+									<button class="btn btn-backedit deletebtn" :value=item.id v-on:click.prevent="de">刪除</button>
+								</form>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
+@section Scripts{
+	<script>
+		const { createApp } = Vue
+
+		createApp({
+			data: function () {
+				return {
+					items: [],
+				}
+			},
+			mounted: function () {
+				axios.get('https://localhost:7016/api/Articles')
+					.then(response => (this.items = response.data))
+			},
+			methods: {
+				de(e) {
+					if (confirm("確定要刪除嗎?") == true) {
+						const id = e.target.value
+						console.log(id)
+						$.ajax({
+							url: "https://localhost:7016/api/Articles" + "/" + id,
+							type: 'DELETE'
+						}).done(function (data) {
+							alert("刪除成功")
+							window.location.reload()
+						})
+					}
+				}
+			}
+		}).mount('#app')
+	</script>
+}
+
+@section Styles{
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.js'
+			integrity='sha512-w39cIBZHEf0ac8RERRGs+aTrQbBIpb+0qGsMCKfwvJSmN6YV8brsbYN1a/nTmuQgfrGyg7p3WI4HRu1rs3rLvw=='
+			crossorigin='anonymous'></script>
+}

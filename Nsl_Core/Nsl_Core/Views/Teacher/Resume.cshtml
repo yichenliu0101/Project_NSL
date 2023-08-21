@@ -1,0 +1,121 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Resume";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.TeacherResumeDto
+<main>
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height ">
+        </div>
+    </section>
+
+    <div class="hiteacher fonttfffff" data-aos="fade-left">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 setting-content">
+                    <div class="tindexphoto-container">
+                        @if (Model.ImageName == null) Model.ImageName = "default.jpg";
+                    <img class="tindexphoto" src="~/uploads/@Model.ImageName" alt="teacher"
+                         title="teacherName" />
+                    </div>
+                </div>
+                <div class="col-md-6 setting-content">
+                    <p style="margin-bottom: 20px;color:peru">Hello!!</p>
+                    <p style="margin-bottom: 20px;color:peru">老師</p>
+                    <p style="margin-bottom: 20px;color:peru">@Model.TeacherName</p>
+                    <p style="color:peru">歡迎回來!!</p>
+                </div>
+
+            </div>
+        </div>
+
+        <hr style="margin-bottom: 30px;color:peru">
+
+        <div>
+            <a asp-action="Resume" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left: 37px;margin-bottom: 15px;font-size:20px">履歷管理</a>
+            <a asp-action="TutorInfo" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left: 37px;margin-bottom: 15px;font-size:20px">課程管理</a>
+            <a asp-action="StudentInfo" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left:37px;margin-bottom: 15px;font-size:20px">學生資訊</a>
+        </div>
+    </div>
+
+    <section class="block-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7 col-lg-9 mb-30 wow fadeInUp" data-wow-duration="600ms">
+                    <div class="about-block active">
+                        <p class="col-lg-12 font30px" style="font-size: 36px;">履歷管理</p>
+                        <div class="padding-TB">
+                            <hr>
+                            <form class="tCV-form mx-auto">
+                                <strong style="font-size: 36px;">老師資料</strong>
+                                <div class="mt-3 tCV-form-font">
+                                    <label class="me-2">銀行代碼:</label>
+                                    <input type="text" class="form-control div-login-form-input"
+                                           id="bankaccount" placeholder="@Model.BankCodeName" readonly />
+                                </div>
+                                <div class="mt-3 tCV-form-font">
+                                    <label class="me-2">銀行帳號:</label>
+                                    <input type="text" class="form-control div-login-form-input"
+                                           id="bankaccount" placeholder="@Model.BankAccount" readonly />
+                                </div>
+                                <hr>
+                                <div class="my-3 tCV-form-font">
+                                    <label class="me-2">教育背景:</label>
+                                    <div style="display: inline-block; width: 70%; vertical-align: top;">
+                                        <textarea class="form-control" name="textarea" placeholder="@Model.Education" style="height: 150px; display: block; width: 100%;" readonly></textarea>
+                                    </div>
+                                </div>
+                                <div class="my-3 tCV-form-font">
+                                    <label class="me-2">工作經驗:</label>
+                                    <div style="display: inline-block; width: 70%; vertical-align: top;">
+                                        <textarea class="form-control" name="textarea" placeholder="@Model.WorkExperience" style="height: 150px; display: block; width: 100%;" readonly></textarea>
+                                    </div>
+                                </div>
+                                <hr />
+                                <strong style="font-size: 36px;">
+                                    教師自介
+                                </strong>
+                                <div class="mt-3 tCV-form-font">
+                                    <label class="me-2">標&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;題:</label>
+                                    <input type="text" class="form-control" id="title" placeholder="@Model.Title"
+                                           style="display: inline-block; width:70%" readonly />
+                                </div>
+                                <div class="my-3 tCV-form-font">
+                                    <label class="me-2">內&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文:</label>
+                                    <div style="display: inline-block; width: 70%; vertical-align: top;">
+                                        <textarea class="form-control" name="textarea" placeholder="@Model.Introduction" style="height: 150px; display: block; width: 100%;" readonly></textarea>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 col-4 mx-auto">
+                                <a asp-action="ResumeEditor" asp-controller="Teacher" class="btn btn-primary" style="color:white">編輯履歷</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+
+
+@section Scripts{
+      <scrift>
+
+      </scrift>
+
+}

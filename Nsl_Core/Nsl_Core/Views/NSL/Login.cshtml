@@ -1,0 +1,153 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Nsl_Core.Models.ViewModels.LoginVM
+
+
+<section>
+    <div class="img-fluid banner-box">
+        <img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height">
+    </div>
+</section>
+
+<section class="block-padding">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-12 col-lg-12 mb-30 wow fadeInUp"
+                 data-wow-duration="600ms">
+                <div class="about-block active">
+                    <div class="container text-center">
+                        <h3 class="mb-4">登入</h3>
+                        <form class="login-form mx-auto" method="post">
+                            <div class="row">
+                                <div class="col-3"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <label class="me-2">帳號:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="text"
+                                           class="form-control pe-0"
+                                           id="account"
+                                           placeholder="請輸入帳號"
+                                           style="display: inline-block;"
+                                           name="Account" />
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Account, "", new { @class = "text-danger px-0" ,@id="accErr"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <label class="me-2">密碼:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="password"
+                                           class="form-control pe-0"
+                                           id="password"
+                                           placeholder="請輸入密碼"
+                                           style="display: inline-block;"
+                                           name="Password" />
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="row mt-1 pe-0">
+                                <div class="col-8 pe-0 text-right">
+                                    <a href="~/NSL/ForgetPassword" class="login-forget-register">忘記密碼</a>
+                                </div>
+                            </div>
+                            <hr style="margin-top:5px;" />
+                            <h5>透過以下方式登入</h5>
+                            <div>
+                                <a class="btn btn-register mt-4" href='@Url.Content("~/Nsl/register")' style="color:#d4b068">
+                                    <span>註冊</span>
+                                </a>
+                                <button type="submit" class="btn btn-primary  mt-4" id="submit">登入</button>
+
+                                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                                <div class="text-center" style="margin-left:41.5%;margin-top:2%">
+                                    <div id="g_id_onload"
+                                         data-client_id="773878485759-cfa2sqkqli0m6k48nsgpco54opbljoml.apps.googleusercontent.com"
+                                         data-login_uri="https://localhost:7217/NSL/ValidGoogleLogin"
+                                         data-auto_prompt="false">
+                                    </div>
+                                    <div class="g_id_signin"
+                                         data-type="standard"
+                                         data-size="large"
+                                         data-theme="outline"
+                                         data-text="sign_in_with"
+                                         data-shape="rectangular"
+                                         data-logo_alignment="center">
+                                    </div>
+                                </div>
+                                <div style="margin-top:1%">
+                                <a href="@Url.Action("LineLoginDirect")">
+                                    <img src="~/picture/btn_login_base.png" alt="Line Login" style="height:44px" />
+                                </a>
+                                </div>
+                            </div>
+                           
+                        </form>
+                        <hr/>
+                        <div class="mt-4">
+                            <button type="button" class="btn btn-primary" id="demoMember">會員Demo</button>
+                            <button type="button" class="btn btn-primary" id="demoTeacher">老師Demo</button>
+                            <button type="button" class="btn btn-primary" id="demoAdmin">管理員Demo</button>
+                            
+                        </div>
+                        <div class="mt-4">
+                            <button type="button" class="btn btn-primary" id="demoL">新用戶Demo</button>
+                            <button type="button" class="btn btn-primary" id="demoTeacherApply">老師申請Demo</button>
+                        </div>
+
+                       
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section Scripts{
+    <script>
+        let regex = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+        $("#account").blur(() => {
+            if (!regex.test($("#account").val())) {
+                $("#accErr").text("格式錯誤")
+                $("#submit").preventDefault()
+            }
+            else {
+                $("#accErr").text("")
+            }
+        })
+    </script>
+
+    <script>
+        $("#demoMember").on('click',function(){
+            console.log(1)
+            $('#account').val('zennivhi@gmail.com')
+            $('#password').val('Cowbae0212')
+        })
+        $("#demoTeacher").on("click", ()=>{
+            $('#account').val('koudousann@gmail.com')
+            $('#password').val('7894156')
+        })
+        $("#demoAdmin").on("click", ()=>{
+            $('#account').val('ANIASANN@gmail.com')
+            $('#password').val('568749')
+        })
+        $("#demoL").on("click", function () {
+            $("#account").val("k1a0n0z3aki@gmail.com")
+            $("#password").val('k1a0n0z3aki')
+        })
+
+        $("#demoTeacherApply").on("click", function(){
+            $("#account").val("boyliu0101@gmail.com")
+            $("#password").val('a123456789')
+        })
+    </script>
+}

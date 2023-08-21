@@ -1,0 +1,86 @@
+﻿@model Nsl_Core.Models.ViewModels.AdminVM
+@{
+	ViewData["Title"] = "CreateAdmin";
+	Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+<section>
+	<div class="backplatform-page">
+		<!-- navbar -->
+		<div class="open-sidenav-btn" id="navbarOpen">
+			&#9776;
+		</div>
+
+		<div class="backplatform-main">
+			<div class="backplatform-title">
+				<h2 id="backTitle">新增管理員</h2>
+			</div>
+
+		</div>
+		<hr />
+		<form method="post" enctype="multipart/form-data">
+			<div>
+				<div class="div-backmemberCAU">
+					<img src="~/picture/JENNIE.PNG" alt="members" class="pic-backmemberCAU" id="adminImg">
+				</div>
+				<div class="btn-backmemberCAU">
+					<input type="file" id="uploadImg" name="photo" hidden/>
+					<label for="uploadImg" class="btn-backedit text-center py-2 btn-select-img">選擇頭像</label>
+				</div>
+			</div>
+
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-md-12 col-lg-9 mb-30 wow fadeInUp" data-wow-duration="600ms">
+						<div class="container text-center mt-5 login-form mx-auto">
+							<strong>
+								帳戶資料
+							</strong>
+							<div class="mt-3">
+								<label class="me-2">姓名:</label>
+								<input type="text" class="form-control" id="name" placeholder="請輸入姓名"
+									   style="display: inline-block; width:30%" name="Name" />
+							</div>
+							<div class="mt-3">
+								<label class="me-2">帳號:</label>
+								<input type="text" class="form-control" id="account" placeholder="請輸入電子郵件"
+									   style="display: inline-block; width:30%" name="Email"/>
+							</div>
+							<div class="my-3">
+								<label class="me-2">密碼:</label>
+								<input type="password" class="form-control" id="password" name="Password"
+									   placeholder="請輸入密碼" style="display: inline-block; width:30%" />
+							</div>
+							<div class="mt-4">
+								<button type="submit" class="btn btn-primary" href="@Url.Content("~/BackMember/ArticleIndex")">確定</button>
+								<a class="btn btn-primary"
+									   style="margin-left: 37px;"
+								   href="~/BackMember/Index">回上一頁</a>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</section>
+
+
+@section Scripts{
+	<script>
+		const uploadImg = $('#uploadImg');
+		const previewImg = $('#adminImg');
+		uploadImg.on('change',(e)=>{
+			previewImg.removeAttr('src')
+			const file = e.currentTarget.files[0];
+
+			if(file!=null){
+				const objectURL = URL.createObjectURL(file);
+				previewImg.attr('src', objectURL);
+			}
+			else{
+				previewImg.attr('src', '@Url.Content("~/picture/JENNIE.PNG")')
+			}
+		})
+	</script>
+}

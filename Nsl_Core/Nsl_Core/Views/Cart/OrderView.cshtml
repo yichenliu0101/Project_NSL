@@ -1,0 +1,495 @@
+﻿@using System.Text.Json;
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.TeacherResumeDto
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "OrderView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    LoginDto? user = null;
+    string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+    if (token != null)
+    {
+        user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+    }
+}
+
+<html>
+<body>
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="~/image/banner-7.jpg"
+                 alt="image description"
+                 class="img-fluid test-banner-img">
+        </div>
+        <main style="margin-top:5% ;">
+            <!-- 購物流程 -->
+            <section class="block-padding mb-3">
+                <div class="container" style="font-size:20px">
+                    <div class="row">
+                        <div class="d-flex col-2">
+                            <i class="fa-solid fa-circle-1"></i>
+                            <strong>確認付款</strong>
+                        </div>
+                        <div class="d-flex col-2">
+                            <i class="fa-solid fa-circle-2"></i>
+                            <strong>完成</strong>
+                        </div>
+                        <div class="d-flex col-2">
+                            <i class="fa-solid fa-circle-3"></i>
+                            <strong>預約時段</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr />
+            <!-- 購物車 -->
+            <section class="my-3">
+                <div class="container">
+                    <h4>購物車</h4>
+                    <table class="table table-light text-center mt-4">
+                        <thead>
+                            <tr align='center' valign="middle" class=" cart-courses-row" style="width:50%;height:auto;">
+                                <th></th>
+                                <th class="col-4">課程</th>
+                                <th class="col-2">堂數</th>
+                                <th class="col-2">單價</th>
+                                <th class="col-2">小計</th>
+                                <th class="col-3">刪除</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="shoppingcartlesson">
+                        </tbody>
+                    </table>
+                    <div class="mt-3">
+                        <strong>支付方式</strong>
+                        <div class="discount-code">
+                            <select id="mypayment" name="Payment" class="form-control div-login-form-input">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <strong>我的折價券</strong>
+                        <div class="discount-code">
+                            <select id="mycoupon" name="Coupon" class="form-control div-login-form-input">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <h3>購物明細</h3>
+                        <div class="cart-shopping-list">
+                            <ul class="shopping-list" id="alltotal">
+                            </ul>
+
+                            <hr />
+                            <div class="container">
+                                <div class="row" style="font-size:20px;color:black">
+                                    <div class="col-4">
+                                        <span>原價</span>
+                                        <span id="allpaymoney">NT$0元</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <span>折扣金額</span>
+                                        <span id="discountmoney">NT$0元</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <span>應付總額</span>
+                                        <span id="lastpaymoney">NT$0元</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="button" class="cart-checkout" id="pay">確認並支付</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </section>
+
+    <!-- include app plugin JavaScript -->
+    <script src="static/js/plugins.min.js"></script>
+    <!-- include app JavaScript -->
+    <script src="static/js/app.min.js"></script>
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- 浮動效果 -->
+    <script src="static/js/vanilla-tilt.js"></script>
+</body>
+
+</html>
+
+@section Scripts{
+    <script>
+        async function load() {      //呈現html頁面
+            $("#shoppingcartlesson").empty()
+            $("#alltotal").empty()
+            $("#allpaymoney").empty()
+
+            const response = await fetch("https://localhost:7016/api/ShoppingCarts/FindShoppingCart?memberId=" + @user.Id)
+            const datas = await response.json();
+            // console.log(datas)
+            let shoppingitem1 = "";
+            let shoppingitem2 = "";
+            let alltotal = 0;
+            const details = datas.map(detail => {
+                let total = (detail.price) * (detail.count);
+                console.log(detail)
+                alltotal += total
+                //console.log(total)
+                //console.log(alltotal)
+                //console.log("detial:", JSON.stringify(detail))
+                //data-??
+                shoppingitem1 +=
+                    `<tr align='center' valign="middle" class="cart-courses-row" data-detail='${JSON.stringify(detail)}'}>
+                         <td class="col-1">
+                                 <figure class="cart-figure">
+                          <img 
+                              src="@Url.Content("~/uploads/")${detail.imageName}"
+                              alt="teacher"title="teacherName" />
+                                      </figure>
+                         </td>
+                         <td class="col-3 ">
+                               <div class="row">
+                                 <div class="col-12">
+                                   <strong>${detail.title}<strong>
+                                 </div>
+                               </div>
+                          </td>
+                         <td class="col-2">
+                                    <div class="d-flex justify-content-center">
+                                       <div class="border border-dark-subtle text-center  btnReduce" style="width: 25px;">-</div>
+                                         <input type="text" readonly value="${detail.count}" id="inputId" class="border border-dark-subtle text-center " style="width: 50px;"/>
+                                         <input type="hidden" value="${detail.id}" id="inputId" class="shoppingcarId"/>
+                                    <div class="border border-dark-subtle text-center  btnIncrease" style="width: 25px;">+</div>
+                         </td>
+
+                         <td class="col-2"> NT$<span>${detail.price}</span></td>
+                               <td class="col-2">NT$${total}</td>
+                               <td class="col-3"><button style="border: none; background-color:transparent" class="deletebtn" value="${detail.id}"><i class="fa-solid fa-x "></i></button></td>
+                    </tr> `
+
+
+                shoppingitem2 += `
+
+                           <li class="row">
+                                  <span class="col-10"style="font-size:20px;color:brown">${detail.title}</span>
+                                  <span class="col-2" style="padding-right:1.2%; text-align:right;font-size:20px;color:black">${detail.count} x NT$${detail.price}</span>
+                           </li>`
+            })
+            $("#shoppingcartlesson").append(shoppingitem1);
+            $("#alltotal").append(shoppingitem2);
+            $("#allpaymoney").text(alltotal + "元");
+            $("#lastpaymoney").text(alltotal + "元");
+
+            //折扣金額
+            //透過下拉式change事件
+
+            $('#mycoupon').on('change', function () {
+
+                $(this).attr('selected', true)
+
+                let discount = $("#mycoupon option:selected").data('dismoney');
+               
+                console.log(discount)
+                $("#discountmoney").text(discount + "元")
+                $("#lastpaymoney").text((alltotal - discount) + "元")
+            })
+
+        }
+        load();
+
+
+        //刪除
+        $(document).on('click', '.deletebtn', function () {
+            const id = ($(this).val());//抓取id 來刪除
+            console.log($(this).val())
+            Swal.fire({
+                title: '確定要刪除嗎?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then(result => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: `https://localhost:7016/api/ShoppingCarts/DeleteShop` + "?id=" + id,
+                        type: 'DELETE'
+
+                    }).done(function (data) {
+                        if (data.isSuccess) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '刪除成功！',
+                                text: '課程已被刪除',
+                            }).then(result => {
+                                if (result.isConfirmed) {
+                                    window.location.reload()
+                                }
+                            });
+                        }
+                    });
+                };
+            });
+        })
+
+
+
+
+        //增加數量
+        $(document).on("click", ".btnIncrease", function () {
+            Swal.fire({
+                title: '確定要增加數量嗎?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then(result => {
+
+            const id = $(this).parent().find('input').eq(1).val()
+            let count = $(this).parent().find('input').eq(0).val();
+            count++;
+            Update(id, count);
+            })
+        })
+        //減少數量
+        $(document).on("click", ".btnReduce", function () {
+            Swal.fire({
+                title: '確定要減少數量嗎?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then(result => {
+            const id = $(this).parent().find('input').eq(1).val()
+            let count = $(this).parent().find('input').eq(0).val();
+            count--;
+            if (count < 1) {
+                count = 0
+            }
+            Update(id, count);
+            })
+        })
+
+
+        //呼叫後端Api中Update的方法更新資料庫購物車筆數
+        async function Update(id, count) {
+
+            //需要寫入的東西(id/數量)
+            const data = {}
+            data.id = id
+            data.qty = count
+
+            $.ajax
+                ({
+                    dataType: 'json',
+                    type: "POST",
+                    url: `https://localhost:7016/api/ShoppingCarts/ShoppingCarUpdate?id=${id}&qty=${count}`,
+                    async: false,
+                    data: JSON.stringify(data),
+                    contentType: 'application/json;', // 要送到server的資料型態
+                    success: function (result) {
+                        console.log("API 回應：", result);
+                        if (result.isSuccess == true) {
+                            GetShopingCart();//購物車圖像裡增加資料
+                            load();
+                        }
+                        else {
+                            alert(result.errMsg);
+                        }
+                    },
+                    error: function (jqXHR) {
+                        alert('error', jqXHR.responseText);
+                    }
+                });
+        }
+
+
+
+        //支付按鈕
+        $(document).on('click', '#pay', function () {
+
+            Swal.fire({
+                title: '確定要結帳嗎?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消'
+            }).then(result => {
+
+                if (result.isConfirmed) {
+
+                    const data = {}//主檔
+                    const details = [];//明細檔
+                    const shoppingcar = [];
+                    //需要寫入的物件
+                    $('#shoppingcartlesson>tr').each(function () { //放入明細檔需要的資料
+                        //data-
+                        const { teacherId, count, price } = $(this).data('detail')//設定teacherId/count/price為html的值
+
+                        const record = {};
+                        record.id = 0;
+                        record.consumptionRecordsId = 0;
+                        record.teacherId = teacherId
+                        record.count = count
+                        record.currentPrice = price
+
+                        details.push(record)//加入明細檔中
+                    })
+
+                    $('.shoppingcarId').each(function () {
+                        console.log($(this).val())
+                        shoppingcar.push($(this).val())
+                    })
+
+                    data.memberId = @user.Id
+
+                    //選擇支付方式
+                    var payment = $('#mypayment').val();
+                    //確認支付方式是否有選取
+                    if (payment == "請選擇") {
+
+                        Swal.fire({
+                            icon: 'failes',
+                            title: '發生錯誤！',
+                            text: '請選擇支付方式！',
+                        })
+                    }
+
+                    data.paymentId = payment
+
+                    //選擇折價券
+                    var coupon = $('#mycoupon').val();
+                    if (coupon == '') {
+                        coupon = null
+                    }
+                    data.couponId = coupon
+                    data.detail = details
+                    data.shoppingCarId = shoppingcar
+
+
+                    $.ajax({
+                        dataType: 'json',
+                        type: "POST",
+                        url: "https://localhost:7016/api/ShoppingCarts/OrderSave",
+                        async: false,
+                        data: JSON.stringify(data),
+                        contentType: 'application/json;', // 要送到server的資料型態
+                        success: function (result) {
+                            console.log("API 回應：", result);
+                            //API成功 response success
+                            let response = true;
+                            if (payment === '2') {
+                                //Ecpay API
+                                //console.log('@Url.Content("~/Cart/ToEcpay")' + "/" + result.orderCode)
+                                window.location = '@Url.Content("~/Cart/ToEcpay?orderCode=")' + result.orderCode
+                            }
+                            if(payment  ==='3'){
+                                //LINE Pay API
+                                linePay(result)
+                            }
+
+                            if (response == true) {
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '交易成功！',
+                                    text: '很高興為您服務！',
+                                }).then(result2 => {
+                                    console.log('hi')
+                                    if (result2.isConfirmed) {
+                                        var url = '@Url.Content("~/Cart/purchasedetails")';
+                                        url = url + "/" + result.orderCode;
+                                        window.open(url);
+                                    }
+                                })
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '交易失敗！',
+                                    text: data.errMsg,
+                                }).then(result => {
+                                    if (result.isConfirmed) {
+                                        history.go(0)//回上一頁
+                                    }
+                                })
+                            }
+                        },
+                    });
+                }
+            })
+        })
+
+
+        //顯示下拉式折價券
+        $(function () {
+            $.ajax({
+                dataType: 'json',
+                type: "Get",
+                url: "https://localhost:7016/api/Coupons/UnusedCoupons?memberid=@user.Id",
+                async: false,
+                success: function (data) {
+                    console.log("API 回應：", data);
+                    $('#mycoupon').append('<option value="" data-dismoney="0"selected>請選擇</option>');
+                    if (data.length > 0) {
+                        for (let k in data) {
+                            $('#mycoupon').append('<option data-dismoney="' + data[k].discountMoney + '" value="' + data[k].id + '" >' + data[k].name + '</option>');
+                        }
+                    }
+                },
+                error: function (jqXHR) {
+                    alert('error', jqXHR.responseText);
+                }
+            });
+        });
+
+
+        function linePay(data) {
+            let baseLoginPayUrl = "https://localhost:7016/api/LinePay/";
+            $.ajax({
+                url: baseLoginPayUrl + "Create",
+                dataType: "json",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: (res) => {
+                    console.log(res)
+                    window.location = res.info.paymentUrl.web;
+                },
+            })
+        }
+        //顯示下拉式支付方式
+        $(function () {
+            $.ajax({
+                dataType: 'json',
+                type: "Get",
+                url: "https://localhost:7016/api/Others/payment",
+                async: false,
+                success: function (data) {
+                    console.log("API 回應：", data);
+                    $('#mypayment').append('<option>請選擇</option>');
+                    if (data.length > 0) {
+                        for (let k in data) {
+                            $('#mypayment').append('<option value="' + data[k].id + '" >' + data[k].paymentMethod + '</option>');
+                        }
+                    }
+                },
+                error: function (jqXHR) {
+                    alert('error', jqXHR.responseText);
+                }
+            });
+        });
+    </script>
+}
+
+@section Styles{
+
+
+
+
+}
+

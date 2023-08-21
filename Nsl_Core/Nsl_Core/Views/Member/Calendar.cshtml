@@ -1,0 +1,221 @@
+﻿@model IEnumerable<Nsl_Core.Models.Dtos.Member.Manager.MemberConsumerRecordDto>
+@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Calendar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    LoginDto? user = null;
+    string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+    if (token != null)
+    {
+        user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+    }
+}
+
+
+<body>
+
+    <main>
+        <!-- banner-container -->
+        <section>
+            <div class="img-fluid banner-box">
+                <img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height">
+            </div>
+        </section>
+
+
+
+        <!-- 消費紀錄主頁-->
+        <div class="container px-4" style="margin-top: 50px; margin-bottom:50px">
+            <div class="row gx-5">
+                <div class="col-sm-9">
+                    <div class="p-3 border bg-light">
+                        <div class="setting">
+                            <!-- 標題 -->
+                            <div class="setting-title">學生行事曆</div>
+
+                            <!-- 內容1 輪播-->
+
+                            <div class="container">
+                                <div class="row setting-content">
+                                    <div id="carouselExampleControls" class="carousel slide"
+                                         data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="color:brown">
+
+                        <section>
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div data-wow-duration="600ms">
+                                        <div class="about-block active">
+                                            <p class="col-lg-12 font30px"></p>
+                                            <partial name="_MemberPeriodPartial"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <div class="d-grid gap-2 col-6 mx-auto" style="margin-top:20px;">
+                            <button class="btn btn-primary" type="button" style="font-size:larger;"><a href="~/member/index" style="color: black;">回上一頁</a></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hiMember fonttfffff" data-aos="fade-left" style="margin-top:23px">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 setting-content">
+                                <div class="tindexphoto-container">
+                                    @if (user.ImageName == null) user.ImageName = "default.jpg";
+                                    <img class="tindexphoto" src=" @Url.Content("~/uploads/")@user.ImageName" alt="teacher"
+                                         title="" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 setting-content" style="color:peru">
+                                <p style="margin-bottom:20px;font-size:20px">Hello</p>
+                                <p style="margin-bottom:20px;font-size:20px">@user.Name</p>
+                                <p style="font-size:20px">歡迎回來</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr style="margin-bottom: 30px;color:peru">
+
+                    <div>
+                        <a href="~/Member/BasicInfoManage" class="btn btn-primary"
+                           style="margin-left:37px;margin-bottom:15px;font-size:20px">會員資料管理</a>
+
+                        <a class="btn btn-primary"
+                           style="margin-left: 37px;margin-bottom:15px;font-size:20px"
+                           href="~/member/ReserveTutorPeriod">預約課程</a>
+
+                        <a asp-action="index" asp-controller="Member" class="btn btn-primary"
+                           style="margin-left: 37px;margin-bottom:15px;font-size:20px">回首頁</a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+    <!-- 浮動效果 -->
+</body>
+
+@section Scripts{
+    <script>
+        const calendar = document.querySelector("#calendar");
+        async function getData() {
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'title',
+                        center: '',
+                        right: 'prev,next dayGridMonth,timeGridWeek,showAllBtn'
+                    },
+                    events: {
+                        url: "https://localhost:7016/api/Tutor/MemberTutorRecord?memberId={@user.Id}",
+                        method: 'GET',
+                        failure: function () {
+                            alert('there was an error while fetching events!');
+                        },
+                    },
+                    customButtons: {
+                        showAllBtn: {
+                            text: "",
+                            click: function () {
+                                if ($(this).html() == "顯示全部") {
+                                    $(this).html('顯示未完成')
+                                }
+                                else {
+                                    $(this).html("顯示全部")
+                                }
+                                calendar.refetchEvents();
+                                calendar.render();
+                            }
+                        }
+                    },
+                    eventDidMount: function (event) {
+                        if ($(".fc-showAllBtn-button").text() !== '顯示全部') {
+                            if (event.event.backgroundColor === "grey") {
+                                event.el.style.display = "none";
+                            }
+                        }
+                    },
+                    eventTimeFormat: { // like '14:30:00'
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        meridiem: false,
+                        hour12: false
+                    },
+                    eventClick: function (info){
+                        const starttime = formatDate(info.event.start)
+                        let status = "未完成"
+                        if(info.event.backgroundColor === 'grey'){
+                            status = '已完成'
+                        }
+                        Swal.fire({
+                            icon: 'info',
+                            title: '課程資訊',
+                            html: `<strong>
+                                       <div>上課老師:${info.event.title}</div>
+                                       <div class="mt-1">上課時間:${starttime}</div>
+                                       <div class="mt-1">上課狀態:${status}</div>
+                                   </strong>`
+                        })
+                    },
+                    buttonText: {
+                        month: '月',
+                        week: '週',
+                    },
+                    filterResourcesWithEvents: true,
+                    allDaySlot: false,
+                   
+                });
+                calendar.render();
+                $(".fc-showAllBtn-button").click();
+            });
+        }
+
+        function formatDate(date) {
+            if (date == null) {
+                return "";
+            }
+            let d = new Date(date),
+                hour = '' + d.getHours(),
+                minute = '' + d.getMinutes(),
+                second = '' + d.getMinutes();
+
+            if (hour.length < 2)
+                hour = '0' + hour;
+            if (minute.length < 2)
+                minute = '0' + minute;
+            if (second.length < 2)
+                second = '0' + second;
+            return [hour, minute, second].join(':');
+        }
+
+
+        getData()
+    </script>
+}
+

@@ -1,0 +1,222 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Nsl_Core.Models.ViewModels.RegisterVM
+<section>
+    <div class="img-fluid banner-box">
+        <img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height">
+    </div>
+</section>
+<!-- Teachers list -->
+<section class="block-padding">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-12 col-lg-12 mb-30 wow fadeInUp" data-wow-duration="600ms">
+                <div class="about-block active">
+                    <div class="container text-center">
+                        <h3 class="mb-4">註冊</h3>
+                        <form class="login-form mx-auto" method="POST">
+                            <strong>基本資料</strong>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">姓名:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="text" class="form-control" id="name" placeholder="請輸入姓名" name="Name" />
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">性別:</label>
+                                </div>
+                                <div class="col-4 float-left px-0 pt-1">
+                                    <input class="gender-radio" type="radio" id="male" name="Gender"
+                                           value="true" style="width:10%" />
+                                    <label for="male">男生</label>
+                                    <input class="gender-radio" type="radio" id="female" name="Gender"
+                                           value="false" style="width:10%" />
+                                    <label for="female">女生</label>
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger text-left"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">生日:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="date" class="form-control" name="Birthday" id="date"/>
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Birthday, "", new { @class = "text-danger text-left"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">電話:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="text" class="form-control" id="phone"
+                                           placeholder="請輸入電話" name="Phone" />
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger text-left"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">城市:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <select id="city" class="form-control" name="City">
+                                    </select>
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger text-left"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">區域:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <select id="area" class="form-control" name="Area">
+                                    </select>
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Area, "", new { @class = "text-danger text-left"})
+                                </div>
+                            </div>
+                            <hr />
+                            <strong>
+                                帳戶資料
+                            </strong>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">帳號:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="text" class="form-control" id="account" placeholder="請輸入電子郵件"
+                                           style="display: inline-block" name="Email" />
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" ,@id="accErr"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">密碼:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="password" class="form-control" id="password"
+                                           placeholder="請輸入密碼" style="display: inline-block" name="Password" />
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger"})
+                                </div>
+                            </div>
+                            <div class="mt-3 row">
+                                <div class="col-3 px-0"></div>
+                                <div class="col-1 float-right px-0 text-right mt-1">
+                                    <span style="color:red">*</span><label class="me-2">確認密碼:</label>
+                                </div>
+                                <div class="col-4 float-left px-0">
+                                    <input type="password" class="form-control"
+                                           placeholder="請重複輸入密碼" style="display: inline-block" id="check"/>
+                                </div>
+                                <div class="col-4 text-start mt-1">
+                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger",@id="passErr"})
+                                </div>
+                            </div>
+                            <input type="submit" class="btn btn-primary mt-4" id="submit" value="註冊">
+                            <a href="~/NSL/Login" class="btn btn-primary mt-4" style="margin-left: 37px;margin-bottom: -2px;color:white" id="login">回登入頁面</a>
+                            <button type="button" class="btn btn-primary mt-4 ms-5" id="demoR"> 註冊Demo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        const select = $("#city");
+
+        let regex = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+        $("#account").blur(() => {
+            if (!regex.test($("#account").val())) {
+                $("#accErr").text("格式錯誤")
+                $("#submit").attr("disabled",true)
+            }
+            else {
+                $("#accErr").text("")
+                $("#submit").attr("disabled", false)
+            }
+        })
+
+        $("#check").on("keyup", function () {
+            if ($("#check").val()===$("#password").val()){
+                $("#passErr").text("")
+                $("#submit").attr("disabled", false)
+            }
+            else{
+                $("#passErr").text("密碼不一致")
+                $("#submit").attr("disabled", true)
+            }
+        })
+
+        async function GetCitys() {
+            const re = await fetch(`https://localhost:7016/api/Others/Cities`)
+            const data = await re.json();
+            const city = data.map(item => {
+                return `<option value="${item.id}">${item.name}</option>`
+            })
+            select.append(city.join(""))
+        }
+
+        async function GetArea() {
+            const re = await fetch(`https://localhost:7016/api/Others/Areas?cityId=${select.val()}`)
+            const data = await re.json();
+            const area = data.map(item => {
+                return `<option value="${item.id}">${item.name}</option>`
+            })
+            $("#area").empty()
+            $("#area").append(area.join(""))
+        }
+
+        GetCitys()
+
+        select.on("change",function(){
+            GetArea()
+        })
+
+        $("#demoR").on("click",function(){
+            $("#name").val("徐家霖")
+            $("#date").val("1995-01-25")
+            $("#male").prop('checked', true)
+            $("#city")[0].selectedIndex = 2
+            GetArea()
+            $("#area")[0].selectedIndex = 4
+            $("#phone").val("0975401910")
+            $("#account").val("k1a0n0z3aki@gmail.com")
+            $("#password").val("k1a0n0z3aki")
+            $("#check").val("k1a0n0z3aki")
+            $("#submit").attr("disabled", false)
+            $(".text-danger").text("")
+        })
+       
+    </script>
+}

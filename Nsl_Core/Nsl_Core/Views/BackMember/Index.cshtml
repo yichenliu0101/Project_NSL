@@ -1,0 +1,225 @@
+﻿@model Nsl_Core.Models.EFModels.Members;
+@{
+	ViewData["Title"] = "View";
+	Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+
+<div class="backplatform-page">
+	<!-- navbar -->
+	<div class="open-sidenav-btn" id="navbarOpen">
+		&#9776;
+	</div>
+
+	<div class="backplatform-main">
+		<div class="backplatform-title">
+			<h2 id="backTitle">會員資料維護</h2>
+		</div>
+
+	</div>
+	<hr />
+	<div class="container">
+		<div class="row">
+			<div class="col-4 ul-reset">
+				<input type="text" placeholder="請輸入要搜尋的關鍵字" name="name" id="search" class="form-control d-inline-block" style="width:60%"/>
+				<button type="button" class="btn-backedit margin-RL d-inline-block" id="searchSubmit">搜尋</button>
+			</div>
+			<div class="col-5 justify-content-center">
+				<div class="row padding-TB">
+					<div class="col-3">
+						<input class="checkboxItem" type="checkbox" name="role" value="all" id="all" checked="checked" />
+						<label for="all">顯示全部</label>
+					</div>
+					<div class="col-3">
+						<input class="checkboxItem" type="checkbox" name="role" value="1" id="member" />
+						<label for="member">顯示會員</label>
+					</div>
+					<div class="col-3">
+						<input class="checkboxItem" type="checkbox" name="role" value="2" id="teacher" />
+						<label for="teacher">顯示老師</label>
+					</div>
+					<div class="col-3">
+						<input class="checkboxItem" type="checkbox" name="role" value="3" id="admin" />
+						<label for="admin">顯示管理員</label>
+					</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="text-center padding-TB">
+					<a href="~/BackMember/CreateAdmin" class="btn btn-primary" style="width:50%;margin-left:80px">新增管理員</a>
+				</div>
+			</div>
+		</div>
+		<div class="teachers-list">
+			<ul class="ul-reset wow fadeInUp" id="teacherList">
+			</ul>
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+	<script>
+		const url = "https://localhost:7016/api/BackMembers";
+		load();
+		const ulTeacher = $("#teacherList");
+
+		async function load() {
+			const response = await fetch(url);
+			const datas = await response.json();
+			const members = memberList(datas);
+			ulTeacher.html(members.join(""))
+			registerDelEvent()
+		}
+
+		$("#searchSubmit").on("click", async (e) => {
+			ulTeacher.empty();
+			const response = await fetch(url + "?search=" + $("#search").val())
+			const datas = await response.json();
+			const members = memberList(datas);
+			ulTeacher.html(members.join(""))
+			registerDelEvent()
+		})
+
+		//Todo Checkbox呈現
+		async function checkList(string) {
+			ulTeacher.empty();
+			const response = await fetch(url + "?" + string);
+			const datas = await response.json();
+			const members = memberList(datas);
+			ulTeacher.html(members.join(""))
+		}
+
+		$(".checkboxItem").on("click", function (e) {
+			const checkboxArray = [];
+			if (e.currentTarget.value !== "all") {
+				$("#all").prop("checked", false)
+				$(".checkboxItem:checked")
+					.map((index, value) => {
+						checkboxArray.push(value.value);
+					});
+				let string = "";
+				while (checkboxArray.length > 0) {
+					string += "role=" + checkboxArray[checkboxArray.length - 1] + "&&";
+					checkboxArray.pop();
+				}
+				string = string.substring(0, string.length - 2)
+				checkList(string)
+			}
+			if (e.currentTarget.value === "all") {
+
+				$("#member").prop("checked", false)
+				$("#teacher").prop("checked", false)
+				$("#admin").prop("checked", false)
+				ulTeacher.empty();
+				load();
+			}
+			if ($(".checkboxItem:checked").length == 0) {
+				$("#all").prop("checked", true)
+			}
+			registerDelEvent()
+		})
+
+		function memberList(datas) {
+			const result = datas.map(member => {
+				if (member.gender == null) member.gender = ""
+
+				let string = `<li>
+								<div class="div-backmember row ani-backcolor">
+									<div class="col-2 mb-4 px-0">
+										<div class="div-triangle-number">
+											<span class="span-triangle-number">${member.memberId}</span>
+										</div>
+										<div class="div-circle">
+											<img class="pic-backmember" src='@Url.Content("~/uploads/")${member.imageName}'alt="teacher" title="teacherName" />
+										</div>
+									</div>
+										<div class="col-2 div-backmemberde">
+											<p class="p-backmember">${member.name}</p>
+											<span class="span-backmembertitle span-color">性別：</span>
+											<span class="span-backmember">${member.gender}</span>
+											<br>
+											<span class="span-backmembertitle span-color">生日：</span>
+											<span class="span-backmember">${formatDate(member.birthday)}
+											</span>
+										</div>
+										<div class="col-4 div-backmemberde2">
+											<span class="span-backmembertitle span-color">居住地：</span>
+											<span class="span-backmember">${member.cityName}</span>
+											<span class="span-backmember">${member.areaName}</span>
+											<br>
+											<span class="span-backmembertitle span-color">Email：</span>
+											<span class="span-backmember">${member.email}</span>
+										</div>
+										<div class="col-2 div-backmemberde3">
+											<span class="span-backmembertitle span-color">帳戶權限：</span>
+											<select id="roleAuthentication" class="form-control div-login-form-input" disabled>
+																								`;
+				if (member.role.id === 1) {
+					string += `<option value=1 selected>會員</option>
+																											<option value=2>教師</option>
+																											<option value=3>管理員</option>`
+				}
+				else if (member.role.id === 2) {
+					string += `<option value=1>會員</option>
+																																	<option value=2 selected>教師</option>
+																															<option value=3 >管理員</option>`
+				}
+				else if (member.role.id === 3) {
+					string += `<option value=1>會員</option>
+																																	<option value=2>教師</option>
+																																	<option value=3 selected>管理員</option>`
+				}
+				string += `</select>
+																									</div>
+																									<div class="col-2 div-backmemberde3 py-3">
+																										<a href='@Url.Content("~/Backmember/CAU/")${member.memberId}' class="btn btn-backedit padding-bottom:20px">查看</a>
+																										<button class="btn btn-backedit deletebtn" value="${member.memberId}">刪除</button>
+																									</div>
+																								</div>
+																							</li>`
+				return (string)
+			})
+			return result;
+		}
+
+		function formatDate(date) {
+			if (date == null) {
+				return "";
+			}
+			let d = new Date(date),
+				month = '' + (d.getMonth() + 1),
+				day = '' + d.getDate(),
+				year = d.getFullYear();
+
+			if (month.length < 2)
+				month = '0' + month;
+			if (day.length < 2)
+				day = '0' + day;
+
+			return [year, month, day].join('-');
+		}
+
+		function registerDelEvent() {
+			$(".deletebtn").on("click", function () {
+				if (confirm("確定要刪除嗎?") == true) {
+					const id = $(this).val();
+
+					$.ajax({
+						url: url + "/" + id,
+						type: 'DELETE'
+					}).done(function (data) {
+						Swal.fire({
+							icon: 'Success',
+							title: '刪除成功！',
+							text: `編號為 ${id}`,
+						})
+						load()
+					})
+				}
+				
+			})
+		}
+	</script>
+}
+
+
+

@@ -1,0 +1,188 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "CouponIndex";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+
+<!-- Title -->
+<section>
+    <div class="backplatform-page">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <h2 id="backTitle">折價券維護</h2>
+            </div>
+
+        </div>
+        <hr />
+
+
+        <div class="teachers-list" id="backCouponIndex">
+            <table class="table w-100">
+                <thead>
+                    <tr class="row div-back-coupon">
+						<th class="col-3">活動名稱</th>
+                        <th class="col-3">活動文案</th>
+                        <th class="col-2">折扣金額</th>
+                        <th class="col-2 text-center">活動日期</th>
+                        <th class="col-1 text-center">上架狀態</th>
+                        <th class="col-1 text-center">
+                            <a href="~/BackMaintain/CouponCreate" class="btn-backCoupon">
+                                新增折價券
+                            </a>
+                        </th>
+					</tr>
+                </thead>
+                <tbody id="addCouponUl">
+                </tbody>
+            </table>
+            @*<div class="row">
+                <div class="col-3 div-border-left ps-4">
+                    <div>
+                        <span class="">
+                            活動名稱
+                        </span>
+                    </div>
+                </div>
+                <div class="col-3 ps-0">
+                    <div class="ms-1 div-border-left ps-3">
+                        <span class="">
+                            活動文案
+                        </span>
+                    </div>
+                </div>
+                <div class="col-2 pe-3">
+                    <div class="div-border-right">
+                        <span>
+                            折扣金額
+                        </span>
+                    </div>
+                </div>
+                <div class="col-2 pe-4">
+                    <div class="pe-2">
+                        <div class="pe-1">
+                            <div class="div-border-right">
+                                <span class="">
+                                    活動日期
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1 ps-0 pe-4">
+                    <div class="pe-3">
+                        <div class=" div-border-right">
+                            <span class="">
+                                上架狀態
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1 div-border-right px-0">
+                    <a class="btn-backCoupon" style="font-weight: 600;" href="~/BackMaintain/CouponCreate">新增折價券</a>
+                </div>
+            </div>
+            <ul class="ul-reset" id="addCouponUl">
+            </ul>*@
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script>
+        const addUl = document.querySelector("#addCouponUl")
+
+        async function GetArticles() {
+            const re = await fetch(`https://localhost:7016/api/Coupons`)
+            const data = await re.json();
+            const coupon = data.map(item => {
+                return (`<tr class="div-back-coupon row ani-backcolor">
+                             <td class="col-3">
+                               <span>${item.name}</span>
+                             </td>
+
+                               <td class="col-3">
+                                    <span>${item.description}</span>
+                                </td>
+
+                          <td class="col-2">
+                                   <span>折扣金額：</span>
+                               <span class="span-color">${item.discountMoney} </span><span> 元 </span>
+                          </td>
+
+                          <td class="col-2 text-center">
+                                  <div>
+                                        <span>上架時間：</span>
+                                        <span class="span-color">${formatDate(item.startTime)}</span>
+                                  </div>
+                                   <div>
+                                        <span>下架時間：</span>
+                                        <span class="span-color">${formatDate(item.expireTime)} </span>
+                                   </div>
+                          </td>
+
+                           <td class="col-1">
+                                  <div class="text-center">
+                                      <span class="span-color">${Status(item.status)}</span>
+                                   </div>
+                          </td>
+
+                                   <td class="col-1 text-center">
+                                  <div class="display-inline">
+                                   <form class="display-inline">
+                                    <a type="button" class="btn-backCoupon" href='@Url.Content("~/BackMaintain/CouponUpdate/")${item.id}'>編輯</a>
+                                    <button type="button" class="btn-backCoupon deletlbtn " value="${item.id}" id="delCoupon">刪除</button>
+                                   </form>
+                                   </div>
+                           </td>
+                 </tr>`)
+            })
+            addUl.innerHTML = coupon.join("");
+            $(".deletlbtn").on("click", function () {
+                if (confirm("確定要刪除嗎?") == true) {
+                    const id = $(this).val();
+
+                    $.ajax({
+                        url: "https://localhost:7016/api/Coupons" + "/" + id,
+                        type: 'DELETE'
+                    }).done(function (data) {
+                        alert("刪除成功")
+                        window.location.reload()
+                    })
+                }
+            })
+        }
+
+        GetArticles();
+
+        function formatDate(date) {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function Status(sa) {
+            if (sa) {
+                return "上架中"
+            }
+            else {
+                return "未上架"
+            }
+        }
+    </script>
+}

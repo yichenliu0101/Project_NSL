@@ -1,0 +1,46 @@
+﻿@{
+	string code = ViewBag.Ordercode;
+}
+<html>
+<head>
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/css/bootstrap.min.css">
+</head>
+<body style="background-color:#F5F5F5">
+	<div class="container">
+		<div style="height:45%"></div>
+		<div class="row">
+			<div class="col-5"></div>
+			<div class="col-1">
+				<div style="color: #d4b068" class="la-ball-spin-fade la-3x">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<form id="form" name="form" action="https://localhost:7016/api/ShoppingCarts/OrderListUpdate" method="POST">
+		<input type="hidden" value="3a354bd6114046c49db9" name="ordercode" id="ordercode"/>
+	</form>
+	<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+	<script>
+		$.ajax({
+			url: `https://localhost:7016/api/ShoppingCarts/OrderListUpdate?ordercode=@code`,
+			method: "POST",
+			success: (res) => {
+				window.location = `@Url.Content("~/Cart/PurchaseDetails/")@code`
+			},
+			error: (err) => {
+				console.log(err);
+			}
+		})
+	</script>
+</body>
+</html>

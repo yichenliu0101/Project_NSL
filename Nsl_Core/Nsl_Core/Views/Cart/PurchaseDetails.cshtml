@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "PurchaseDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*@model IEnumerable<Nsl_Core.Models.Dtos.Member.Manager.MemberConsumerRecordDto>*@
+@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@{
+    ViewData["Title"] = "PurchaseDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string btnVal = string.Empty;
+    LoginDto? user = null;
+    if (Accessor.HttpContext.Session.GetString("Login") != null)
+    {
+        user = Accessor.HttpContext.Session.GetKey<LoginDto>("Login");
+    }
+}
+
+@inject IHttpContextAccessor Accessor
+
+<body>
+    <main>
+    <!-- banner-container -->
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="~/image/banner-5.jpg" alt="image description" class="img-fluid banner-height">
+        </div>
+    </section>
+    
+
+    <section class="block-padding mb-3">
+        <div class="container" style="font-size:20px">
+            <div class="row">
+                <div class="d-flex col-2">
+                    <i class="fa-solid fa-circle-1"></i>
+                    <strong>確認付款</strong>
+                </div>
+                <div class="d-flex col-2">
+                    <i class="fa-solid fa-circle-2"></i>
+                    <strong>完成</strong>
+                </div>
+                <div class="d-flex col-2">
+                    <i class="fa-solid fa-circle-3"></i>
+                    <strong>預約時段</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+    <hr/>
+    <!-- 消費紀錄主頁-->;
+
+    <h1 style="margin-left:320px;padding:20px;color:cornflowerblue;border:2px,dashed,orange">謝謝您對於NSL家教平台的信任</h1>
+    <h1 style="margin-left:320px;padding:20px;color:cornflowerblue;border:2px,dashed,orange">我們將繼續提供最好的服務</h1>
+    <h1 style="margin-left:320px;padding:20px;color:cornflowerblue;border:2px,dashed,orange">祝福您學習順利</h1>
+
+
+    <div class="container px-4" style="margin-top: 50px; margin-bottom:50px">
+        <div class="row gx-5">
+            <div class="col-sm-10">
+                <div class="p-3 border bg-light"style="text-align:center">
+                    <div class="setting">
+                        <!-- 標題 -->
+                        <div class="setting-title">消費明細</div>
+                    </div>
+
+                    <div class="setting">
+
+                        <div class="container">
+                            <div class="row setting-content">
+                                <div id="carouselExampleCaptions" class="carousel slide"
+                                     data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table text-center align-middle">
+                        <thead style="background-color:black;">
+                            <tr style="color:white">
+
+                                <th scope="col">訂單編號</th>
+                                <th scope="col">課程名稱</th>
+                                <th scope="col">堂數</th>
+                                <th scope="col">單價</th>
+                                <th scope="col">消費總額</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody id="detail"></tbody>
+                    </table>
+
+                        <a href="~/Member/ReserveTutorPeriod" class="btn btn-primary" style="color:aliceblue;font-size:larger;margin:5px;">預約課程</a>
+                        <a href="~/member/index" class="btn btn-primary" style="color:aliceblue;font-size:larger;margin:5px;">回會員主頁</a>
+                        <div style="text-align:right"><strong style="font-size:25px">訂單總額 :</strong><span id="orderAmt" style="color:skyblue;font-size:25px"></span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+    <!-- 浮動效果 -->
+
+</body>
+
+@section Scripts{
+    <script>
+        async function load() {
+            var url = "https://localhost:7016/api/ShoppingCarts/AllShopList?ordercode=" + '@ViewBag.Ordercode';
+            console.log(url);
+            const response = await fetch(url)
+            const datas = await response.json();
+            let count = 0
+            var totalamt = 0;
+            var dismoney = 0;
+            const details = datas.map(detail => {
+                console.log(detail)
+                totalamt = totalamt + detail.allPrice;
+                dismoney = detail.discountMoney;
+                count++
+                return (`<tr>
+
+                                        <td>${detail.ordercode}</td>
+                                        <td>${detail.title}</td>
+                                        <td>${detail.count}</td>
+                                        <td>${detail.currentPrice}</td>
+                                        <td>${detail.allPrice}</td>
+
+                        </tr>`)
+            })
+
+            var orderAmt = totalamt - dismoney;
+            $('#orderAmt').html(orderAmt);
+            $("#detail").html(details.join(""));
+        }
+        load();
+
+
+    </script>
+}
+@section Styles{
+
+
+}
+

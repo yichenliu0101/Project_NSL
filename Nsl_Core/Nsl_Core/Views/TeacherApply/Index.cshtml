@@ -1,0 +1,569 @@
+﻿@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+
+@inject IHttpContextAccessor Accessor
+@{
+	ViewData["Title"] = "ArticleIndex";
+    LoginDto? user = null;
+    string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+    if (token != null)
+    {
+        user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+    }
+}
+<section>
+    <div class="img-fluid banner-box">
+        <div style="position:absolute;top:120px;left:42%" class="text-center mt-4">
+            <h3 style="color:white">準備好要成為教師了嗎？</h3>
+            <div id="apply" class="btn btn-primary teacher-apply-btn mt-3" data-bs-toggle="modal">點我申請老師</div>
+        </div>
+       
+        <img src="~/image/banner-board.jpg" alt="image description" class="img-fluid banner-height" style="object-position:bottom">
+    </div>
+</section>
+
+
+
+<section class="block-padding">
+    <div class="container margin-TB mb-3">
+        <div class="row align-items-center">
+            <div class="col-md-10 col-lg-10 mb-30 wow fadeInUp margin-center" data-wow-duration="600ms"
+                 style="visibility: visible;">
+                <div class="about-block active">
+                    <div>
+                        <div style="width:80%;" class="mx-auto">
+                            <div class="text-center">
+                                <h3>線上一對一家教老師</h3>
+                                <strong>帶給你更多更自由的教學選擇</strong>
+                            </div>
+                            <div class="mt-5">
+                                <div class="row mb-4">
+                                    <div class="col-7 py-5">
+                                        <h4 class="align-middle">1.自訂理想 薪資價位</h4>
+                                        <p>課程有1小時的課程安排，教師可根據自己的教學經驗設定應得的上課酬勞</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <figure class="apply-teacher-intro">
+                                            <img src="~/picture/teacher-1.jpg" />
+                                        </figure>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-7 py-5">
+                                        <h4 class="align-middle">2.自由安排 授課時間</h4>
+                                        <p>沒有最低授課時數限制，週一到週日皆開放時段開課，教師只有選擇有空的時間，學生就會接踵而來</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <figure class="apply-teacher-intro">
+                                            <img src="~/picture/teacher-2.jpg" />
+                                        </figure>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-7 py-5">
+                                        <h4 class="align-middle">3.在家工作 兼顧生活</h4>
+                                        <p>教師只要準備好視訊鏡頭及耳麥，就可以隨時隨地為來自各地的學生上課，打開電腦即可賺取額外收入</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <figure class="apply-teacher-intro">
+                                            <img src="~/picture/teacher-3.jpg" />
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container" style="width: 900px;margin-top:80px">
+                            <div class="text-center">
+                                <h3>我們正在積極尋找</h3>
+                                <strong>如果您有以下特質歡迎加入我們</strong>
+                            </div>
+                            <div class="row mt-5 mx-auto" style="padding: 0px 60px;">
+                                <div class="col-md-6 col-lg-6 mb-45 fadeInUp" data-wow-duration="600ms">
+                                    <!-- sBlock -->
+                                    <div class="service-block">
+                                        <span class="icon text-primary icon-presentation"></span>
+                                        <div class="service-text">
+                                            <h5 class="mb-15">
+                                                <a href="javascript:void(0);">1. 有 相關語言背景</a>
+                                            </h5>
+                                            <p>
+                                                相關科系畢業、亦是相關國家留學，或是語言相關領域專業
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-45 fadeInUp" data-wow-duration="800ms">
+                                    <!-- sBlock -->
+                                    <div class="service-block">
+                                        <span class="icon text-primary icon-chat"></span>
+                                        <div class="service-text">
+                                            <h5 class="mb-15">
+                                                <a href="javascript:void(0);">2. 有 相關教學經驗</a>
+                                            </h5>
+                                            <p>
+                                                曾經有一對一私人輔導經驗、補習班授課、講師等相關經驗佳
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-45 fadeInUp" data-wow-duration="1s">
+                                    <!-- sBlock -->
+                                    <div class="service-block">
+                                        <span class="icon text-primary icon-flag"></span>
+                                        <div class="service-text">
+                                            <h5 class="mb-15">
+                                                <a href="javascript:void(0);">3. 希望 時間由自己掌控</a>
+                                            </h5>
+                                            <p>
+                                                由自己來決定自己的上課收入及工作時間
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6 mb-45 fadeInUp" data-wow-duration="1s">
+                                    <!-- sBlock -->
+                                    <div class="service-block">
+                                        <span class="icon text-primary icon-target"></span>
+                                        <div class="service-text">
+                                            <h5 class="mb-15">
+                                                <a href="javascript:void(0);">4. 想要 提升自我價值</a>
+                                            </h5>
+                                            <p>
+                                                發揮自身能力，成就自身也成就他人
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container" style="width: 900px;margin-top:80px">
+                            <div class="text-center">
+                                <h3>申請教師常見問題</h3>
+                            </div>
+                            <div class="mt-5">
+                                <div>
+                                    <div class="apply-qa-q">
+                                        <strong>Q1：成為教師有什麼條件？ 可以兼職做嗎？</strong>
+                                    </div>
+                                    <p class="mt-3">只要擁有相關經驗或經驗，亦或是對教學有極大的熱忱，都可以成為NSL的教師。平時可以自由選擇工作時間，因此即使有正式的工作，也能利用自身空閒時間招收學生賺取額外收入。</p>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div>
+                                    <div class="apply-qa-q">
+                                        <strong>Q2：上課需要自備教材嗎？</strong>
+                                    </div>
+                                    <p class="mt-3">教師需要自行準備上課教材，因為學生的教學會因個人需求不同而需要滾動式調整，因此NSL目前沒有提供統一教材。</p>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div>
+                                    <div class="apply-qa-q">
+                                        <strong>Q3：上課費用如何訂定？</strong>
+                                    </div>
+                                    <p class="mt-3">教師可自行評估過去教學經驗與備課時間成本來定價，定價也能在後續自行做調整唷。</p>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div>
+                                    <div class="apply-qa-q">
+                                        <strong>Q4：如果還有任何問題該找誰？</strong>
+                                    </div>
+                                    <p class="mt-3">點上方聯絡我們，我們有四位開發者能給予您最快速的服務並解決您的問題。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <figure style="height: 500px;margin:0" id="applyButtom">
+        <img src="~/picture/apply-buttom.jpg">
+    </figure>
+</section>
+
+<div id="applyModal" aria-hidden="true" aria-labelledby="ApplyModalLabel" class="modal fade">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <form method="post" id="teacherFormData" name="applyForm">
+                @if (user != null)
+                {
+                    <input name="MemberId" value="@user.Id" id="memberId" hidden/>
+                }
+                <div class="apply-one-item-wrapper" id="applyForm">
+                    <div>
+                        <div class="apply-list-container">
+                            <div class="apply-layout d-flex" id="step-1">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>請選擇一項，完成申請並填寫基本資料後就能夠開始您的教學囉!</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">請選擇您主要教學的語言</h2>
+                                        <hr>
+                                        <div class="selectionWrapper">
+                                            <ul class="px-0" id="category">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="apply-layout d-flex" id="step-2">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>請選擇您能簡單溝通的語言</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">您會說哪些語言</h2>
+                                        <hr>
+                                        <div class="selectionWrapper">
+                                            <ul class="px-0" id="language">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="apply-layout d-flex" id="step-3">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>不管是已經有多年教學經驗的老師，或是想踏入這個產業的新血，NSL都由衷的歡迎您！</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">請問是否有教學的經驗?</h2>
+                                        <hr>
+                                        <ul class="px-0" id="tutorExperience">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="apply-layout d-flex" id="step-4">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>您可以自由安排教學時間，沒有最低時間的限制。</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">您目前的工作狀態為？</h2>
+                                        <hr>
+                                        <ul class="px-0" id="workStatus">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="apply-layout d-flex" id="step-5">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>投入的時間越多，越容易受到學生的青睞！</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">您預期未來每週可教學時數為？</h2>
+                                        <hr>
+                                        <ul class="px-0" id="tutorHoursOfWeek">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="apply-layout d-flex" id="step-6">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>透過NSL能讓你財富自由</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">您期望達成多少月收入？</h2>
+                                        <hr>
+                                        <ul class="px-0" id="revenueTarget">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="apply-layout d-flex" id="step-7">
+                                <div class="apply-layout-left text-center align-items-center ">
+                                    <div class="container-form-title">
+                                        <h3>最後一步！<br />即將迎向最自由的工作環境</h3>
+                                    </div>
+                                </div>
+                                <div class="apply-layout-right">
+                                    <div class="form-padding">
+                                    </div>
+                                    <div class="form-content">
+                                        <h2 class="text-center">最後一步囉</h2>
+                                        <hr>
+                                        <div style="padding:20%">
+                                            <div class="inputIntro text-center">
+                                                <h3 id="introDemo">提供自己的優勢將有利於更快速通過審核</h3>
+                                                <input type="text" name="Intro" placeholder="請輸入..." id="Intro"
+                                                       class="introForm form-selection form-control" maxlength="50"/><span id="nowTextCount">0</span><span>/50</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="prevBtn btn btn-primary" style="width:100px">上一步</button>
+                        <button type="submit" class="nextBtn btn btn-primary" style="width:100px">下一步</button>
+                        <button type="button" class="btn-close close-btn-apply" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        $(".teacher-apply-btn").on('click',function(){
+        @{
+            if (user == null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'warning',
+                    title: '無法申請！',
+                    text: '請先登入後再申請！',
+                    confirmButtonText: '前往登入頁',
+                    showCancelButton: true,
+                    cancelButtonText: '再看看',
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            window.location.href="@Url.Content("~/NSL/Login")";
+                        }
+                    })
+                    return
+                </text>
+            }
+        }
+        @{
+            if(user!=null)
+            {
+                <text>
+                $.ajax({
+                url: `https://localhost:7016/api/TeachersApplies/VerifyIsApplied?memberId=${@user.Id}`,
+                type: 'GET',
+                }).done(function (data) {
+                    if (!data.isSuccess) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '申請失敗！',
+                            text: data.errMsg,
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                return
+                            }
+                        })
+                    }
+                    else {
+                        $('#applyModal').modal('toggle')
+                    }
+                })
+                </text>
+            }
+        }
+            
+        })
+
+        const formWrapper = $(".apply-list-container");
+        let currentPosition = 0;
+        let index = 1;
+        $(".prevBtn").click(function () {
+            currentPosition += 1920;
+            index--;
+            move(currentPosition);
+        })
+
+        $(".nextBtn").click(function (e) {
+            e.preventDefault();
+            if (index < 7) {
+                moveNext()
+            }
+            else {
+                createTeacherApply();
+            }
+        })
+        const languages = [];
+        function processForm() {
+            $('input[name="Language"]:checked').map((index, data) => {
+                console.log(data);
+                languages.push(data.value);
+            })
+            var formdata = {
+                MemberId: $("#memberId").val(),
+                Category: $('input[name="Category"]:checked').val(),
+                Language: languages,
+                TutorExperience: $('input[name="TutorExperience"]:checked').val(),
+                WorkStatus: $('input[name="WorkStatus"]:checked').val(),
+                TutorHoursOfWeek: $('input[name="TutorHoursOfWeek"]:checked').val(),
+                RevenueTarget: $('input[name="RevenueTarget"]:checked').val(),
+                Intro: $("#Intro").val()
+            };
+            return JSON.stringify(formdata)
+        } 
+
+        function createTeacherApply() {
+            const applyUrl = 'https://localhost:7016/api/TeachersApplies/GetApplyFormData';      
+            $.ajax({
+                url: applyUrl,
+                type: 'POST',
+                contentType: 'application/json',
+                data: processForm(),
+            }).done(function (data) {
+                if (data.isSuccess) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '申請成功！',
+                        text: '謝謝您的申請，我們會盡快驗證您的申請！',
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/NSL/Index';
+                        }
+                    })
+
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '申請失敗！',
+                        text: data.errMsg,
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            history.go(0)
+                        }
+                    })
+                }
+
+            });
+        }
+
+
+        function moveNext() {
+            currentPosition -= 1920;
+            index++;
+            move(currentPosition);
+        }
+        function move(currentPosition) {
+            formWrapper.css({ "transform": "translate(" + currentPosition + "px,0px)" })
+            btnStatus()
+        }
+
+        function btnStatus() {
+            (index == 7) ? $(".nextBtn").html('送出') : $(".nextBtn").html('下一步');
+            (index == 1) ? $(".prevBtn").attr("disabled", "disabled") : $(".prevBtn").removeAttr("disabled");
+        }
+        btnStatus();
+
+        async function loadData() {
+            const url = 'https://localhost:7016/api/Others/GetApplyDatas';
+            const response = await fetch(url);
+            const datas = await response.json();
+
+            dataToForm(datas.categories, 'Category', 'radio', 'category')
+            dataToForm(datas.languages, 'Language', 'checkbox', 'language')
+            dataToForm(datas.tutorExperience, 'TutorExperience', 'radio', 'tutorExperience')
+            dataToForm(datas.workStatus, 'WorkStatus', 'radio', 'workStatus')
+            dataToForm(datas.tutorHoursOfWeek, 'TutorHoursOfWeek', 'radio', 'tutorHoursOfWeek')
+            dataToForm(datas.revenueTarget, 'RevenueTarget', 'radio', 'revenueTarget')
+
+            $(".radioForm").on('click', function () {
+                console.log($(this).closest(".form-selection").siblings());
+                if (this.checked) {
+                    $(this).closest(".form-selection").css("borderColor", '#FFA042')
+                    $(this).closest("li").siblings().find(".form-selection").css("borderColor", '#cecece');
+                    moveNext()
+                }
+            })
+
+            $(".langForm").on('click', function () {
+                console.log(this);
+                if (this.checked) {
+                    $(this).closest(".form-selection").css("borderColor", '#FFA042')
+                }
+                else {
+                    $(this).closest(".form-selection").css("borderColor", '#cecece')
+                }
+            })
+
+            $(".close-btn-apply").on('click', function () {
+                currentPosition = 0;
+                index = 1;
+                move(currentPosition);
+                $("#teacherFormData").trigger("reset");
+                $(".form-selection").css("borderColor", '#cecece')
+
+            })
+        }
+
+        function dataToForm(data, modelProperty, inputType, domEl) {
+            if (inputType === 'radio') {
+                const options = data.map(x => {
+                    return `<li>
+                                        <label title="${x.name}" class="form-selection form-control py-3">
+                                                    <input value="${x.id}" type="radio" name="${modelProperty}" class="radioForm" required/><img style="margin-right:10px" />${x.name}
+                                        </label>
+                                    </li>`
+                })
+                document.querySelector(`#${domEl}`).innerHTML = options.join('');
+            }
+            else {
+                const options = data.map(x => {
+                    return `<li>
+                                                <label title="${x.name}" class="form-selection form-control py-3">
+                                                                            <input value="${x.id}" type="checkbox" name="${modelProperty}" class="langForm" required/><img style="margin-right:10px" />${x.name}
+                                                </label>
+                                            </li>`
+                })
+                document.querySelector(`#${domEl}`).innerHTML = options.join('');
+            }
+        }
+        loadData()
+
+        const countMax = 50;
+        const countThis = $("#Intro")
+        const textCount = $("#nowTextCount")
+        countThis.on("'keydown keyup keypress change'", function () {
+            textCount.text(countThis.val().length)
+            console.log(countThis.val().length);
+            if (countThis.val().length > 50 || countThis.val().length < 10) {
+                countthis.css("borderColor", "red");
+             } 
+             else{
+                countthis.css("borderColor", "#cecece");
+            }
+        })
+
+        $("#introDemo").on("click", function(){
+            countThis.val("想透過教學的熱忱感染學生，讓他們能夠更加精進！")
+            textCount.text(countThis.val().length)
+        })
+    </script>
+}

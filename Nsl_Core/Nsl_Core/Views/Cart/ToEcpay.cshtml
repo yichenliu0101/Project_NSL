@@ -1,0 +1,40 @@
+﻿@model System.Collections.Generic.Dictionary<string, string>
+
+<html>
+	<head>
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/css/bootstrap.min.css">
+	</head>
+<body style="background-color:#F5F5F5">
+	<div class="container">
+		<div style="height:45%"></div>
+		<div class="row">
+			<div class="col-5"></div>
+			<div class="col-1">
+				<div style="color: #d4b068" class="la-ball-spin-fade la-3x">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<form id="form" name="form" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" method="POST">
+		@foreach (var key in @Model.Keys.ToList())
+		{
+			@(key) <input type="hidden" name="@key" value="@Model[key]" />
+		}
+	</form>
+	<script>
+		window.onload = function () {
+			document.getElementById("form").submit();
+		}
+	</script>
+</body>
+</html>

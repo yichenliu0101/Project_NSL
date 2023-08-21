@@ -1,0 +1,95 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+@using System.Text.Json;
+@{
+	LoginDto? user = null;
+	string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+	if (token != null)
+	{
+		user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+	}
+
+}
+@inject IHttpContextAccessor Accessor
+<div id="calendarMember"></div>
+
+<script>
+	const calendarMember = document.querySelector("#calendarMember");
+	const memberCalendar = new FullCalendar.Calendar(calendarMember, {
+		initialView: 'dayGridMonth',
+		height: 615,
+		headerToolbar: {
+			left: 'title',
+			center: '',
+			right: 'prev,next dayGridMonth,timeGridWeek,showAllBtn'
+		},
+		events: {
+			url: `https://localhost:7016/api/Tutor/MemberTutorRecord?memberId=${@user.Id}`,
+			method: 'GET',
+			textColor: "black"
+		},
+		customButtons: {
+			showAllBtn: {
+				text: "",
+				click: function () {
+					if ($(this).html() == "顯示全部") {
+						$(this).html('顯示未完成')
+					}
+					else {
+						$(this).html("顯示全部")
+					}
+					memberCalendar.refetchEvents();
+					memberCalendar.render();
+				}
+			}
+		},
+		eventDidMount: function (event) {
+			if ($(".fc-showAllBtn-button").text() === '顯示未完成') {
+				if (event.event.backgroundColor === "grey") {
+					event.el.style.display = "none";
+				}
+			}
+		},
+		eventTimeFormat: { // like '14:30:00'
+			hour: 'numeric',
+			minute: '2-digit',
+			meridiem: false,
+			hour12: false
+		},
+		eventClick: function (info) {
+			const starttime = formatDate(info.event.start)
+			let status = "未完成"
+			if (info.event.backgroundColor === 'grey') {
+				status = '已完成'
+			}
+			Swal.fire({
+				icon: 'info',
+				title: '課程資訊',
+				html: `<strong>
+							<div>上課老師:${info.event.title}</div>
+							<div class="mt-1">上課時間:${starttime}</div>
+						    <div class="mt-1">上課狀態:${status}</div>
+					   </strong>`
+			})
+		},
+		buttonText: {
+			month: '月',
+			week: '週',
+		},
+		filterResourcesWithEvents: true,
+		allDaySlot: false,
+	});
+
+	async function getMemberPeriod() {
+		document.addEventListener('DOMContentLoaded', function () {
+			memberCalendar.render();
+			memberCalendar.updateSize()
+			$(".fc-showAllBtn-button").click();
+		});
+	}
+
+	getMemberPeriod()
+</script>

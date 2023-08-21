@@ -1,0 +1,107 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="title" content="HyperExtra is a multipurpose agency template from LettStartDesign">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="LettStartDesign">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Never Stop Learning</title>
+
+    <!-- include the site Google Fonts stylesheet -->
+    <link href="~/css/css.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="~/css/all.min.css">
+    <link rel="stylesheet" href="~/css/boxicons.min.css">
+
+    <!-- include theme plugins setting stylesheet -->
+    <link rel="stylesheet" href="~/css/plugins.min.css">
+
+    <!-- include the site bootstrap stylesheet -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+
+    <!-- include the site stylesheet -->
+    <link rel="stylesheet" href="~/css/style.min.css">
+
+    <link rel="stylesheet" href="~/css/nsl.css">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- fullcalendar -->
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth'
+            });
+            calendar.render();
+        });
+
+    </script>
+</head>
+
+<body>
+    <!-- pageWrapper -->
+    <div id ="main">
+        <!-- pageHeader -->
+        <div class="container">
+            <div class="about-block active my-4">
+                <div class="row">
+                    <div class="backplatform-content col-lg-12">
+                        <img src="~/picture/NSL 後臺管理系統.png" class="pic-backlogin-title" alt="NSL">
+                    </div>
+                    <div class="backplatform-content col-lg-12">
+                        <img src="~/picture/LOGO-3.png" class="pic-backlogin-logo" alt="NSL">
+                    </div>
+                </div>
+
+                <div class="row mt-5 px-5">
+                    <div class="px-5">
+                        <form action="">
+                            <div class="px-5">
+                                <div class="mt-3 col-6 margin-center">
+                                    <label class="me-2">帳號:</label>
+                                    <input type="text" class="form-control" id="account" placeholder="請輸入電子郵件"
+                                           style="display: inline-block; width:70%" />
+                                </div>
+                                <div class="my-3 col-6 margin-center">
+                                    <label class="me-2">密碼:</label>
+                                    <input type="password" class="form-control" id="password" placeholder="請輸入密碼"
+                                           style="display: inline-block; width:70%" />
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mx-auto div-backlogin-button my-3">
+                                    <button type="submit" class="btn btn-primary col-2 margin-RL">登入</button>
+                                    <button type="button" class="btn btn-primary col-2 margin-RL">忘記密碼</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- include app plugin JavaScript -->
+        <script src="~/js/plugins.min.js"></script>
+        <!-- include app JavaScript -->
+        <script src="~/js/app.min.js"></script>
+        <!-- AOS -->
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <!-- 浮動效果 -->
+        <script src="~/js/vanilla-tilt.js"></script>
+        <!-- sidenav -->
+        <script src="~/js/nsl.js"></script>
+</body>
+
+</html>

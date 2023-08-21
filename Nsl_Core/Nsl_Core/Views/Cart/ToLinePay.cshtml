@@ -1,0 +1,71 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using System.Text.Json;
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+@inject IHttpContextAccessor Accessor
+
+<h3>交易中...</h3>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+	let baseLoginPayUrl = "https://localhost:7016/api/LinePay/";
+	let transactionId = "";
+	let orderId = "";
+
+	window.onload = () => {
+		// 取出 query parameter 中的 transactionId & orderId
+		const params = new Proxy(new URLSearchParams(window.location.search), {
+			get: (searchParams, prop) => searchParams.get(prop),
+		});
+
+		transactionId = params.transactionId;
+		orderId = params.orderId;
+
+		loadOrderAmount();
+	}
+	async function loadOrderAmount() {
+		const response = await fetch(`https://localhost:7016/api/LinePay/GetAmount?orderId=${orderId}`);
+		const amount = await response.json();
+		console.log(amount)
+		confirmPayment(amount);
+	}
+
+	function confirmPayment(getAmount) {
+		//塞入資料
+		payment = {
+			amount: getAmount,
+			currency: 'TWD',
+		};
+		//  送出確認交易
+		$.ajax({
+			url: baseLoginPayUrl + `Confirm?transactionId=${transactionId}&orderId=${orderId}`,
+			dataType: "json",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify(payment),
+			success: (res) => {
+				console.log(res);
+				updateComsuptionStatus();
+			},
+			error: (err) => {
+				console.log(err);
+			}
+		})
+	}
+
+	function updateComsuptionStatus(){
+		$.ajax({
+			url: `https://localhost:7016/api/ShoppingCarts/OrderListUpdate?ordercode=${orderId}`,
+			method: "POST",
+			success: (res) => {
+				console.log(res);
+				window.location = `https://localhost:7217/Cart/PurchaseDetails?id=${orderId}`
+			},
+			error: (err) => {
+				console.log(err);
+			}
+		})
+	}
+</script>

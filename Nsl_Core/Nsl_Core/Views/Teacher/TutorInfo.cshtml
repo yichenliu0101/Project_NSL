@@ -1,0 +1,983 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Nsl_Core.Models.Dtos
+@using System.Text.Json
+@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "TutorInfo";
+    int currentPage = 5;
+    int totalPage = 20;
+}
+@model Nsl_Core.Models.Dtos.Teacher.TeacherResume.TeacherTutorRecordDto
+<main>
+    <!-- banner-container -->
+    <section>
+        <div class="img-fluid banner-box">
+            <img src="@Url.Content("~/image/banner-5.jpg")" alt="image description" class="img-fluid banner-height ">
+        </div>
+    </section>
+    <!-- 聯絡老師區 -->
+    <div class="hiteacher fonttfffff" data-aos="fade-left">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 setting-content">
+                    <div class="tindexphoto-container">
+                        @if (Model.ImageName == null) Model.ImageName = "default.jpg";
+                        <img class="tindexphoto" src="~/uploads/@Model.ImageName" alt="teacher"
+                             title="teacherName" />
+                    </div>
+                </div>
+                <div class="col-md-6 setting-content">
+                    <p style="margin-bottom: 20px;color:peru">Hello!!</p>
+                    <p style="margin-bottom: 20px;color:peru">老師</p>
+                    <p style="margin-bottom: 20px;color:peru">@Model.TeacherName</p>
+                    <p style="color:peru">歡迎回來!!</p>
+                </div>
+
+            </div>
+        </div>
+
+        <hr style="margin-bottom: 30px;color:peru">
+
+        <div>
+            <a asp-action="Resume" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left: 37px;margin-bottom: 15px;font-size:20px">履歷管理</a>
+            <a asp-action="TutorInfo" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left: 37px;margin-bottom: 15px;font-size:20px">課程管理</a>
+            <a asp-action="StudentInfo" asp-controller="Teacher" class="btn btn-primary" style="color:white;margin-left:37px;margin-bottom: 15px;font-size:20px">學生資訊</a>
+        </div>
+    </div>
+    <!-- 聯絡老師區 -->
+    <!-- 標題 簡介 -->
+    <!-- 自我介紹 評價 履歷 -->
+
+    <section class="block-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7 col-lg-9 mb-30 wow fadeInUp" data-wow-duration="600ms">
+                    <div class="about-block active">
+                        <p class="col-lg-12 font30px" style="font-size: 36px;">課程管理</p>
+                        <div class="padding-TB">
+                            <hr>
+                            @*  <form class="tCV-form mx-auto">*@
+                            <strong style="font-size: 36px;">課程資訊</strong>
+                            <div class="mt-3 tCV-form-font" style="text-align: center;">
+                                <label class="me-2">語言類別:</label>
+                                <input type="text" class="form-control div-login-form-input"
+                                       id="othercategories" placeholder=請輸入教學語言 value="@Model.CategoryName" readonly />
+                            </div>
+                            <div class="mt-3 tCV-form-font" id="Price" style="text-align: center;">
+                                <label class="me-2">課程收費:</label>
+                                <input type="text" style="display: inline-block; width: 17%; margin-right: 10px;" id="teacherPrice" class="form-control div-login-form-input" placeholder="請輸入課程收費" oninput="this.value = this.value.replace(/[^0-9]/g, '')" readonly />
+                                <label class="me-2">(NT$/小時)</label>
+                                <button type="submit" style="display: inline-block;" class="btn btn-backedit2" id="saveButton" disabled>保存編輯</button>
+                                <button type="button" style="display: inline-block;" class="btn btn-backedit2" id="editButton">收費編輯</button>
+                            </div>
+                            <div class="mt-3 tCV-form-font" style="text-align: center;">
+                                <form name="testForm" id="tagForm">
+                                    <label class="me-2">課程標籤:</label>
+                                    <input type="text" class="form-control div-login-form-input" name="hashTag" style="display: inline-block; width: 51%; margin-right: 10px;"
+                                           id="teachertags" placeholder="請輸入課程標籤" />
+                                    <button type="button" style="display: inline-block;" class="btn btn-backedit2" onclick="addHash(this.form)">新增標籤</button>
+                                    <br>
+                                    <input type="text" name="hash" disabled hidden>
+                                    <div id="hashList" class="hash-list" style="max-height: 200px; overflow: auto;border-radius: 10px;"></div>
+                                </form>
+                            </div>
+                            <hr>
+                            <strong style="font-size: 36px;">
+                                偏好教學時段
+                            </strong>
+                            <div style="margin-top: 30px;" id="defaultTutorPeriodSection">
+                                <div style="margin-top: 30px;text-align: center;">
+                                    <label for="radioSun" class="week-label">
+                                        星期日
+                                        <input id="radioSun" type="radio" name="WeekDay" class="week-input" value="7" />
+                                    </label>
+
+                                    <label for="radioMon" class="week-label">
+                                        星期一
+                                        <input id="radioMon" type="radio" name="WeekDay" class="week-input" value="1" />
+                                    </label>
+
+                                    <label for="radioTue" class="week-label">
+                                        星期二
+                                        <input id="radioTue" type="radio" name="WeekDay" class="week-input" value="2" />
+                                    </label>
+
+                                    <label for="radioWed" class="week-label">
+                                        星期三
+                                        <input id="radioWed" type="radio" name="WeekDay" class="week-input" value="3" />
+                                    </label>
+
+                                    <label for="radioThu" class="week-label">
+                                        星期四
+                                        <input id="radioThu" type="radio" name="WeekDay" class="week-input" value="4" />
+                                    </label>
+
+                                    <label for="radioFri" class="week-label">
+                                        星期五
+                                        <input id="radioFri" type="radio" name="WeekDay" class="week-input" value="5" />
+                                    </label>
+
+                                    <label for="radioSat" class="week-label">
+                                        星期六
+                                        <input id="radioSat" type="radio" name="WeekDay" class="week-input" value="6" />
+                                    </label>
+                                </div>
+                                <table class="table table-bordered" style="margin-top: 10px;">
+                                    <thead style="background-color:black;">
+                                        <tr style="color:white">
+                                            <th scope="col" style="text-align: center;">時段</th>
+                                            <th scope="col" colspan="8" style="text-align: center;">點擊選擇偏好教學時段</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="selectTutorPeriodTable">
+                                        <tr>
+                                            <th scope="row">夜間至清晨</th>
+                                            <td name="1">00:00 ~ 00:59</td>
+                                            <td name="2">01:00 ~ 01:59</td>
+                                            <td name="3">02:00 ~ 02:59</td>
+                                            <td name="4">03:00 ~ 03:59</td>
+                                            <td name="5">04:00 ~ 04:59</td>
+                                            <td name="6">05:00 ~ 05:59</td>
+                                            <td name="7">06:00 ~ 06:59</td>
+                                            <td name="8">07:00 ~ 07:59</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">早上至下午</th>
+                                            <td name="9">08:00 ~ 08:59</td>
+                                            <td name="10">09:00 ~ 09:59</td>
+                                            <td name="11">10:00 ~ 10:59</td>
+                                            <td name="12">11:00 ~ 11:59</td>
+                                            <td name="13">12:00 ~ 12:59</td>
+                                            <td name="14">13:00 ~ 13:59</td>
+                                            <td name="15">14:00 ~ 14:59</td>
+                                            <td name="16">15:00 ~ 15:59</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">下午至晚上</th>
+                                            <td name="17">16:00 ~ 16:59</td>
+                                            <td name="18">17:00 ~ 17:59</td>
+                                            <td name="19">18:00 ~ 18:59</td>
+                                            <td name="20">19:00 ~ 19:59</td>
+                                            <td name="21">20:00 ~ 20:59</td>
+                                            <td name="22">21:00 ~ 21:59</td>
+                                            <td name="23">22:00 ~ 22:59</td>
+                                            <td name="24">23:00 ~ 23:59</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="margin-top: 30px;" class="text-center">
+                                    <!-- 這裡要改，返回上一頁，或是引導到教師頁面 -->
+                                    <button type="button" class="btn btn-primary" id="tutorPeriodEdit"
+                                            >
+                                        編輯
+                                    </button>
+                                    <!-- 這裡要改，返回上一頁，或是引導到教師頁面 -->
+                                    <button type="button" class="btn btn-primary" id="tutorPeriodSave" disabled>保存</button>
+                                </div>
+                            </div>
+                            <hr />
+                            <strong style="font-size: 36px;">
+                                課程排程
+                            </strong>
+                            <div class="mt-3 tCV-form-font">
+                                <partial name="_TeacherTutorPeriodPartial" model="Model"></partial>
+                                <script async defer src="https://apis.google.com/js/api.js"></script>
+                                <script src="~/js/calendar.js"></script>
+                            </div>
+                            <hr />
+                            <strong style="font-size: 36px;">
+                                課程紀錄
+                            </strong>
+                            <div class="mt-3 tCV-form-font">
+                                <label class="me-2">紀錄查詢:</label>
+                                <select id="dateRangeSelect" class="form-control div-login-form-input">
+                                    <option value="0">請選擇日期</option>
+                                    <option value="7">最近七天</option>
+                                    <option value="30">最近一個月</option>
+                                    <option value="90">最近三個月</option>
+                                </select>
+                            </div>
+                            <div style="margin-top: 30px;">
+                                <table class="table" id="dateTable">
+                                    <thead style="background-color:black;">
+                                        <tr style="color:white">
+                                            <th scope="col">#</th>
+                                            <th scope="col">開課時間</th>
+                                            <th scope="col">學生姓名</th>
+                                            <th scope="col">課程狀態</th>
+                                            <th scope="col">完成課程</th>
+                                            <th scope="col">滿意度</th>
+                                            <th scope="col">查看評論</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                            @* </form>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <!-- Modal -->
+        <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModal" aria-hidden="true">
+            <div class="modal-dialog  modal-dialog-centered">
+                <form id="createTutorForm" name="createTutorForm" method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">新增上課時段</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label>上課日期</label>
+                            <input type="date" class="form-control" id="StartDate" name="StartDate" />
+                            <label>上課時間</label>
+                            <select class="form-control" id="StartTime" name="StartTime">
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeModal">關閉</button>
+                            <button type="submit" class="btn btn-primary" id="createTutorPeriod">新增課程</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section>
+        <!-- Modal -->
+        <div class="modal fade" tabindex="-1" aria-labelledby="checkCommentModalLabel" aria-hidden="true" id="checkCommentModal">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalLabel" style="color:gray;text-align:center">評論</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="checkComment">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="margin-right:33%">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+
+@section Styles{
+    <style>
+        .active > .page-link, .page-link.active {
+            background-color: #d4b068;
+            border-color: #d4b068;
+        }
+    </style>
+}
+
+@section Scripts{
+    <script>
+
+        let currentPage = 1;
+        $(".page-link").on('click', function (e) {
+            e.preventDefault();
+            if ($(this).text().trim() === '»') {
+                currentPage++;
+                console.log(currentPage)
+            }
+            if ($(this).text().trim() === "«") {
+                currentPage--;
+            }
+            if ($(this).text().trim() !== '»' && $(this).text().trim() !== "«") {
+                currentPage = $(this).text().trim();
+                $(this).addClass("active").parent().siblings().find(".page-link").removeClass("active")
+            }
+
+        })
+
+        async function loadPeriod() {
+            const url = 'https://localhost:7016/api/Others/TutorPeriod';
+            const response = await fetch(url);
+            const datas = await response.json();
+
+            const periods = datas.map(period => {
+                return (`<option value=${period.id}>${period.tutorPeriod1}</option>`)
+            })
+
+            $('#StartTime').html(`<option value=0>-----請選擇-----</option>+ ${periods}`)
+        }
+
+        loadPeriod()
+
+        $('#createTutorPeriod').on('click', function (e) {
+            e.preventDefault();
+            try {
+                const createPeriod = new Date($('#StartDate').val() + " " + $("#StartTime>option:selected").text())
+                if (createPeriod < new Date()) {
+                    throw "新增課堂的時間不能小於現在時間"
+                }
+                console.log(createPeriod);
+                if ($('#StartDate').val() === '' || $('#StartTime>option:selected').val() === '0') {
+                    throw ("請確定資料填寫無誤！");
+                }
+                const url = 'https://localhost:7016/api/Tutor/CreateNewCourse';
+                const formData =
+                {
+                    TeacherId: @Model.TeacherId,
+                    StartDate: $('#StartDate').val(),
+                    StartTime: $('#StartTime>option:selected').val()
+                }
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                }).done(function (data) {
+                    if (data.isSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '新增成功！',
+                            text: '可以在排程上看見囉！',
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                $('#createTutorForm').trigger("reset");
+                                $('#closeModal').click();
+                                calendar.refetchEvents();
+                                calendar.render();
+                            }
+                        })
+
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '新增失敗！',
+                            text: `${data.errMsg}`
+                        })
+                    }
+                });
+            }
+            catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '新增失敗！',
+                    text: e
+                })
+            }
+        })
+
+
+        function switchResult(val) {
+            switch (val) {
+                case '1':
+                    return defaultTutor[1];
+                case '2':
+                    return defaultTutor[2];
+                case '3':
+                    return defaultTutor[3];
+                case '4':
+                    return defaultTutor[4]
+                case '5':
+                    return defaultTutor[5];
+                case '6':
+                    return defaultTutor[6];
+                case '7':
+                    return defaultTutor[7];
+                default:
+                    throw ("沒有這個星期")
+            }
+        }
+
+        const defaultTutor = { '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [] };
+
+        async function loadDefaultTutor() {
+            const url = `https://localhost:7016/api/Tutor/GetDefaultTutorPeriod?teacherId=${@Model.TeacherId}`;
+            const response = await fetch(url);
+            const datas = await response.json();
+
+            loadDefaultTutorArray(datas)
+
+        }
+
+        function loadDefaultTutorArray(datas) {
+            let count = 1;
+            for (const key in datas) {
+                for (const index in datas[key]) {
+                    if (datas[key].length > 0) {
+                        defaultTutor[count].push(String(datas[key][index]))
+                    }
+                }
+                count++
+            }
+            console.log(defaultTutor);
+        }
+
+        loadDefaultTutor();
+
+        $("#tutorPeriodSave").on('click', function () {
+            try {
+                const url = 'https://localhost:7016/api/Tutor/EditDefaultTutorPeriod';
+                const formData =
+                {
+                    TeacherId: @Model.TeacherId,
+                    WeekPeriod: defaultTutor
+                }
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                }).done(function (data) {
+                    if (data.isSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '儲存成功！',
+                            text: '我們已為您編輯課程！',
+                        }).then(result => {
+                            console.log('hi')
+                            if (result.isConfirmed) {
+                                calendar.refetchEvents();
+                                calendar.render();
+                            }
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '儲存失敗！',
+                            text: `${data.errMsg}`
+                        })
+                    }
+
+                });
+            }
+            catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '儲存失敗！',
+                    text: e
+                })
+            }
+        })
+
+        function resetDefaultTutor() {
+            for (let i = 1; i < 8; i++) {
+                defaultTutor[i] = [];
+            }
+            loadDefaultTutor()
+        }
+
+        $("#tutorPeriodEdit").on('click', function () {
+            if ($(this).text().includes('取消')) {
+                $(this).text("編輯");
+                //Reset
+                resetDefaultTutor();
+                const allTd = $("#selectTutorPeriodTable>tr>td");
+                allTd.css('background-color', '#ffffff');
+                allTd.css('color', '#212529');
+                $(".week-label").css('background-color', '#ffffff');
+                $(".week-label").css('color', '#212529');
+                $('input[name="WeekDay"]').prop('checked', false);
+                $('input[name="WeekDay"]').prop('disabled', true);
+                $("#tutorPeriodSave").prop('disabled', true)
+                //Off event
+                $(".week-label, #selectTutorPeriodTable>tr>td").off('click');
+            }
+            else {
+                $(this).text("取消");
+                $("#tutorPeriodSave").prop('disabled', false)
+                $('input[name="WeekDay"]').prop('disabled', false);
+                $('#selectTutorPeriodTable>tr>td').on('click', function () {
+                    try {
+                        //未選擇星期
+                        if ($('input[name="WeekDay"]:checked').length === 0) {
+                            throw ("請先選擇週幾")
+                        }
+                        //拿取現在的時段以及辨認現在的星期
+                        const currentPeriod = $(this).attr('name')
+                        const currentWeekDay = $('input[name=WeekDay]:checked').val()
+                        const currentWeekArray = switchResult(currentWeekDay)
+                        if ($(this).css('color') !== 'rgb(33, 37, 41)') {
+                            $(this).css('background-color', '#ffffff')
+                            $(this).css('color', '#212529')
+                            const itemIndex = currentWeekArray.indexOf(currentPeriod);
+                            currentWeekArray.splice(itemIndex, 1);
+                        }
+                        else {
+                            $(this).css('background-color', '#d4b068')
+                            $(this).css('color', '#ffffff')
+                            currentWeekArray.push(currentPeriod);
+                        }
+
+                    }
+                    catch (e) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '失敗！',
+                            text: e
+                        })
+                    }
+
+                })
+                $(".week-label").on('click', function () {
+                    //初始化td
+                    const allTd = $("#selectTutorPeriodTable>tr>td")
+                    allTd.css('background-color', '#ffffff');
+                    allTd.css('color', '#212529');
+
+                    //換禮拜幾顯示
+                    $(this).siblings().css('background-color', '#ffffff')
+                    $(this).siblings().css('color', '#212529')
+                    $(this).css('background-color', '#d4b068')
+                    $(this).css('color', '#ffffff')
+
+                    //找出禮拜幾儲存的array資料
+                    const currentWeekDay = $(this).children("input").val()
+                    const currentWeekArray = switchResult(currentWeekDay)
+
+                    //將儲存的資料的td染色
+                    currentWeekArray.map(x => {
+                        allTd.map((index, value) => {
+                            if ($(value).attr('name') === x) {
+                                $(value).css('background-color', '#d4b068')
+                                $(value).css('color', '#ffffff')
+                            }
+                        })
+
+                    })
+                })
+            }
+        })
+    </script>
+
+
+
+
+    <script>
+        const url = `https://localhost:7016/api/TeacherTutor/TeacherTutorRecord?teacherId=${@Model.TeacherId}`
+        const urlPrice = `https://localhost:7016/api/TeacherTutor/TeacherGetPrice?teacherId=${@Model.TeacherId}`
+        const urlEditPrice = "https://localhost:7016/api/TeacherTutor/EditTeacherPrice"
+        const urlTags = `https://localhost:7016/api/TeacherTutor/GetTeacherTags?teacherId=${@Model.TeacherId}`
+        const ulTeacher = $("#tbody");
+        const checkComment = document.querySelector('#checkComment');
+        loadPrice()
+        load();
+
+        async function load() {
+            const response = await fetch(url);
+            const datas = await response.json();
+            const teachers = tutorRecordList(datas);
+            ulTeacher.html(teachers.join(""))
+
+            openComment()
+            loadTags()
+
+            finishCourse()
+        }
+
+        const ulPrice = document.querySelector('#Price');
+        async function loadPrice() {
+            const response = await fetch(urlPrice);
+            const datas = await response.json();
+
+            const priceValue = datas[0].price;
+            if (priceValue !== null) {
+                const formattedPrice = priceValue.toLocaleString();
+                $('#teacherPrice').val(formattedPrice);
+            } else {
+                $('#teacherPrice').val('');
+            }
+        }
+
+
+        function tutorRecordList(datas) {
+            const tutors = datas.map(tutor => {
+                const time = new Date(tutor.tutorStartTime)
+                const period = formatDate(time);
+                const year = new Date(time).getFullYear();
+                const month = new Date(time).getMonth();
+                const date = new Date(time).getDate();
+
+                const tutorStartTime = `${year}/${month}/${date} ${period}`
+                let avgSatisfactionDisplay = tutor.satisfaction !== null ? tutor.satisfaction : '尚無評論';
+                const btnFinish = (tutor.statusName==='未完成')?
+                    `<button type="button" class="btnFinish" value="${tutor.id}">完成課程</button>`:
+                    `<button type="button" class="btnFinish" value="${tutor.id}" disabled>完成課程</button>`
+                let string = `<tr>
+                                                        <th scope="row"></th>
+                                                                <td class="tutorTime">${tutorStartTime}</td>
+                                                        <td>${tutor.memberName}</td>
+                                                        <td>${tutor.statusName}</td>
+                                                        <td>${btnFinish}</td>
+                                                        <td>${avgSatisfactionDisplay}</td>
+                                                        <td><button type="button" class="tutorGetId" data-bs-toggle="modal" data-bs-target="#checkCommentModal"  value="${tutor.id}">查看評論</button></td>
+                                                     </tr>`
+                return (string)
+            })
+            return tutors;
+        }
+
+        function finishCourse(){
+
+            $(".btnFinish").on("click", function () {
+                const tutorTime = new Date($(this).parent().siblings().eq(1).text());
+                const tutor = tutorTime.setTime(tutorTime.getTime() + 1 * 60 * 60 * 1000);
+
+                if (tutor > new Date()) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '更改錯誤！',
+                        text: '還未達可完成時間！',
+                    })
+                    throw ("錯誤");
+                }
+
+                Swal.fire({
+                    icon: 'question',
+                    title: '要完成課程嗎！',
+                    text: '點擊後學生即可評論！',
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: '取消',
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        const finishUrl = `https://localhost:7016/api/TeacherTutor/UpdateTutorRecordStatus?tutorRecordId=${$(this).val()}`
+                        $.ajax({
+                            url: finishUrl,
+                            type: 'PUT',
+                        }).done(function (data) {
+                            if (data.isSuccess) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '更改完成！',
+                                    text: '可以讓學生評論囉！',
+                                }).then(result=>{
+                                    if(result.isConfirmed){
+                                        window.location.reload();
+                                    }
+                                })
+                            }
+                            else {
+                                throw (data.errMsg);
+                            }
+                        })
+                    }
+                })
+            })
+        }
+
+        function openComment() {
+            $(".tutorGetId").on("click", async function () {
+                checkComment.innerHTML = "";
+                const id = $(this).val();
+                const response = await fetch('https://localhost:7016/api/TeacherTutor/TeacherComments' + "?id=" + id)
+                const datas = await response.json();
+                const comments = datas.map(comment => {
+
+                    let avgSatisfactionDisplay = comment.satisfaction !== null ? comment.satisfaction : '尚無評論';
+                    let studentComment = comment.commentContent !== null ? comment.commentContent : '尚無評論';
+                    return (`<div class="card">
+                                                 <div class="card-header" style="text-align:center">
+                                                     學生 : ${comment.memberName} / 滿意度 : ${avgSatisfactionDisplay}
+                                                  </div>
+                                                  <div class="card-body">
+                                                     <h4 class="card-text" style="color:gray"> ${studentComment}</h4>
+                                                  </div>
+                                                </div>`)
+                })
+                checkComment.innerHTML = comments.join("");
+
+            })
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // 獲取下拉式選單元素和tbody元素
+            const dateRangeSelect = document.getElementById("dateRangeSelect");
+            const tbody = document.getElementById("tbody");
+
+            // 監聽下拉式選單的變化
+            dateRangeSelect.addEventListener("change", function () {
+                // 獲取選中的值（表示最近幾天）
+                const days = parseInt(dateRangeSelect.value);
+                const selected = $('#dateRangeSelect>option:selected').val();
+
+                // 獲取當前日期
+                const today = new Date();
+
+                // 製作起始日期
+                const startDate = new Date(today);
+                startDate.setDate(today.getDate() - (days - 1));
+
+                // 假設您的 AJAX URL
+                const url = `https://localhost:7016/api/TeacherTutor/TeacherTutorRecord?teacherId=${@Model.TeacherId}`;
+                // 發起 AJAX 請求
+                fetch(url)
+                    .then(response => response.json())
+                    .then(datas => {
+                        // 判斷是否有時間條件 如果有
+                        // 篩選出在範圍內的 tutor
+                        //console.log(selected)
+                        if (selected === '0') {
+                            console.log(selected)
+                            const tableContent = tutorRecordList(datas);
+                            tbody.innerHTML = tableContent.join("");
+                            openComment()
+
+                            finishCourse()
+                        }
+                        else {
+                            const filteredTutors = datas.filter(tutor => {
+                                const tutorDate = new Date(tutor.tutorStartTime);
+                                return tutorDate >= startDate && tutorDate <= today;
+
+                            });
+
+                            //沒有就全部
+
+                            // 生成符合範圍的表格內容
+                            const tableContent = tutorRecordList(filteredTutors);
+                            tbody.innerHTML = tableContent.join("");
+                            openComment()
+
+                            finishCourse()
+                        }
+                        // 更新表格內容
+
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                    });
+            });
+
+            // 初始化下拉式選單
+            dateRangeSelect.dispatchEvent(new Event("change"));
+        });
+
+        saveButton.addEventListener('click', () => {
+            const formData =
+            {
+                teacherId: @Model.TeacherId,
+                price: $('#teacherPrice').val()
+            }
+            if (isNaN(parseInt($('#teacherPrice').val()))) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '儲存失敗！',
+                    text: '請輸入正確的費用！',
+                })
+            }
+            else{
+            $.ajax({
+                url: urlEditPrice,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+            }).done(function (data) {
+                if (data.isSuccess) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '儲存成功！',
+                        text: '課程收費已完成更新！',
+                    })
+                        // 恢復readonly
+                        teacherPrice.setAttribute('readonly', 'readonly');
+                        // 禁用保存編輯按鈕
+                        saveButton.setAttribute('disabled', 'disabled');
+
+                        loadPrice()
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '儲存失敗！',
+                        text: `${data.errMsg}`
+
+                    })
+                        loadPrice()
+                }
+
+            });
+            }
+        });
+
+        $('#teachertags').autocomplete({
+            source: async function (request, response) {
+                const resp = await fetch(`https://localhost:7016/api/TeacherTutor/AutoCompleteTags?input=${request.term}`);
+                const datas = await resp.json();
+                console.log(datas)
+                const tags = datas.map(x => {
+                    return x.name
+                })
+                return response(tags);
+            },
+            minLength: 0
+        })
+
+        const ulTags = $("#hashList");
+        async function loadTags() {
+            const response = await fetch(urlTags);
+            const datas = await response.json();
+            const tags = datas.map(tag => {
+                const tagForm = document.querySelector("#tagForm")
+                tagForm.hash.value += " " + "#" + tag.tagsName
+                return (`<span class="tag hash-tag">#${tag.tagsName}<input type="hidden" name="hashMin" class="saveTags"><span class="remove-tag" onclick="removeHash(this);deleteTeacherTags(${tag.tagsId})">x</span></span>`)
+            })
+            ulTags.html(tags.join(""));
+        }
+
+        function addHash(frm) {
+            createTags()
+                .then(function () {
+                    var hashTxt = frm.hashTag.value;
+                    hashTxt = '#' + hashTxt.split('#').join('');
+                    var $hashList = $("#hashList");
+                    var hashListTxt = $hashList.html();
+
+                    if (hashListTxt == undefined) hashListTxt = '';
+                    hashListTxt += '<span class="tag hash-tag">' + hashTxt + '<input type="hidden" name="hashMin" value="' + hashTxt + '"><span class="remove-tag" onclick="removeHash(this);">x</span></span>';
+                    $hashList.html(hashListTxt);
+                    frm.hash.value += (' ' + hashTxt);
+                    loadTags()
+                })
+                .catch(function () {
+                    return;
+                });
+
+        }
+
+
+
+        function removeHash(obj) {
+            var frm = obj.closest('form');
+
+            var $hashList = $("#hashList");
+            var hashVal = frm.hash.value;
+            hashVal = hashVal.trim();
+            var hashListArr = hashVal.split(' ');
+
+            var idx = hashListArr.indexOf($(obj).siblings('input').val());
+            hashListArr.splice(idx, 1);
+
+            var resultTxt = '';
+            for (var i = 0; i < hashListArr.length; i++) {
+                resultTxt += (' ' + hashListArr[i])
+            }
+            frm.hash.value = resultTxt;
+
+            $(obj).parent().remove();
+        }
+
+        function createTeacherTags() {
+            const formData =
+            {
+                teacherId: @Model.TeacherId,
+                tagId: $('.saveTags').val()
+            }
+            console.log(formData)
+            $.ajax({
+                url: 'https://localhost:7016/api/TeacherTutor/CreateTeacherTags',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+            }).done(function (data) {
+                if (data.isSuccess) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '儲存成功！',
+                        text: '課程標籤已完成更新！',
+                    })
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '儲存失敗！',
+                        text: `${data.errMsg}`
+                    })
+                }
+
+            });
+        };
+
+        function createTags() {
+            return new Promise(function (resolve, reject) {
+
+                const formData =
+                {
+                    teacherId: @Model.TeacherId,
+                    tagsName: $('#teachertags').val()
+                };
+
+                $.ajax({
+                    url: 'https://localhost:7016/api/TeacherTutor/CreateTeacherTags',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                }).done(function (data) {
+                    if (data.isSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '儲存成功！',
+                            text: '課程標籤已完成更新！',
+                        });
+                        resolve();
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '儲存失敗！',
+                            text: `已經有此標籤了喔!`
+                        });
+                        reject();
+                    }
+                })
+
+            });
+        };
+
+        function deleteTeacherTags(id) {
+            const formData =
+            {
+                teacherId: @Model.TeacherId,
+                tagId: id
+            }
+            $.ajax({
+                url: 'https://localhost:7016/api/TeacherTutor/DeleteTeachersTags',
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify(formData), 
+            }).done(function (data) {
+                if (data.isSuccess) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '刪除成功！',
+                        text: '課程標籤已完成更新！',
+                    })
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '刪除失敗！',
+                        text: `${data.errMsg}`
+                    })
+                }
+
+            });
+        };
+
+        editButton.addEventListener('click', () => {
+            // 取消readonly
+            teacherPrice.removeAttribute('readonly');
+            // 取消disabled
+            saveButton.removeAttribute('disabled');
+        });
+    </script>
+}

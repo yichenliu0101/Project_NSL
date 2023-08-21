@@ -1,0 +1,98 @@
+﻿@using Nsl_Core.Models.Dtos.Member.Login;
+@using Nsl_Core.Models.Infra;
+@using System.Text.Json;
+@{
+	LoginDto? user = null;
+	string? token = Accessor.HttpContext.Request.Cookies.Get<string>("Login");
+	if (token != null)
+	{
+		user = JsonSerializer.Deserialize<LoginDto?>(JwtHelpers.DecodeToken(token));
+	}
+}
+@inject IHttpContextAccessor Accessor
+
+<section>
+	<div class="img-fluid banner-box">
+		<img src="~/image/banner-7.jpg"
+			 alt="image description"
+			 class="img-fluid test-banner-img">
+	</div>
+	<main style="margin-top:5% ;">
+		<!-- 購物流程 -->
+		<div class="container">
+			<div class="row mb-3">
+				<div class="col-4">
+					<select class="form-select" id="teacherPeriodOption">
+					</select>
+				</div>
+				<div class="col-3">
+					<div class="form-control">
+						<strong id="stockTitle">剩餘此老師課程數量:</strong>
+						<span id="stockCount"></span>
+					</div>
+					
+				</div>
+				<div class="col-5">
+					<h3>行事曆</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-7">
+					<partial name="_TutorPeriodPartial" model="@Model"></partial>
+				</div>
+				<div class="col-5">
+					<partial name="_MemberPeriodPartial" model="@Model"></partial>
+				</div>
+			</div>
+			<div class="my-3">
+					<button class="btn btn-primary" id="goBack" style="margin-left:42%">回上一頁</button>
+					<a class="btn btn-primary" href="~/NSL/Index">回首頁</a>
+
+			</div>
+		</div>
+	</main>
+</section>
+@section Styles{
+	<style>
+		a{
+			color:black;
+		}
+		a:hover{
+			transition:0.3s;
+			color: #d4b068
+		}
+	</style>
+}
+@section Scripts{
+	<script>
+		let tutorStock = {};
+		async function getTutorStock(){
+			tutorStock ={};
+			const response = await fetch(`https://localhost:7016/api/Tutor/GetTutorStock?memberId=${@user.Id}`)
+			const datas = await response.json();
+
+			const stockTeacher = datas.map(x=>{
+				
+				tutorStock[`${x.teacherId}`] = x.tutorStock;
+				return (`<option class="form-control" value="${x.teacherId}">${x.teacherName}</option>`)
+			})
+			$("#teacherPeriodOption").html(`<option class="form - control">-----請選擇-----</option>`+ stockTeacher.join(""));
+			$("#stockCount").html(tutorStock[`${teacherSelect.val()}`]);
+		}
+		async function tutorPageLoad(){
+			await getTutorStock()
+			getTeacherPeriod(teacherSelect.val());
+		}
+		tutorPageLoad();
+
+		const teacherSelect = $("#teacherPeriodOption")
+		teacherSelect.on('change', function () {
+			$("#stockCount").html(tutorStock[`${teacherSelect.val()}`]);
+			getTeacherPeriod(teacherSelect.val());
+		})
+
+		$("#goBack").on("click", function(){
+			history.go(-1)
+		})
+	</script>
+}

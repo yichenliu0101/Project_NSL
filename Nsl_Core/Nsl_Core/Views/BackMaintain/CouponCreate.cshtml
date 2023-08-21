@@ -1,0 +1,121 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Nsl_Core.Models.Dtos.Website.CouponDto
+@{
+    ViewData["Title"] = "CouponCreate";
+    Layout = "~/Views/Shared/_BackLayout.cshtml";
+}
+
+<!-- Title -->
+<section>
+    <div class="backplatform-page">
+        <!-- navbar -->
+        <div class="open-sidenav-btn" id="navbarOpen">
+            &#9776;
+        </div>
+
+        <div class="backplatform-main">
+            <div class="backplatform-title">
+                <a id="demoC"><h2 id="backTitle">折價券維護</h2></a>
+            </div>
+
+        </div>
+        <hr />
+        <div class="container font20px mt-5">
+            <form class="login-form mx-auto" name="formData" enctype="multipart/form-data" method="post">
+                <div class="row">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">標題：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <input type="text" class="form-control div-login-form-input" id="name"
+                               placeholder="請輸入標題" name="Name"/>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">內文：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <textarea class="form-control" id="texta" placeholder="請輸入內文" style="height:150px;display: inline-block; width:70%" name="Description"></textarea>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">折扣金額：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <input type="number" class="form-control div-login-form-input" id="cash"
+                               placeholder="請輸入折扣金額" name="DiscountMoney"/>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">使用門檻：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <input type="number" class="form-control div-login-form-input" id="condition"
+                               placeholder="請輸入門檻金額" name="Condition" />
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">上架時間：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <input type="date" class="form-control div-login-form-input" name="StartTime" id="startTime" />
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">下架時間：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <input type="date" class="form-control div-login-form-input" name="ExpireTime" id="expireTime" />
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-2 pt-1 text-right">
+                        <label class="me-2">上架狀態：</label>
+                    </div>
+                    <div class="col-10 div-backcoupon">
+                        <select id="select" name="Status" class="form-select div-login-form-input">
+                            <option value="true">上架中</option>
+                            <option value="false">未上架</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="col-10 mt-5">
+
+                <div class="px-5 mt-5">
+                    <div class="px-5">
+                        <button type="submit" class="btn btn-primary">儲存</button>
+                        <a class="btn btn-primary" href="~/BackMaintain/CouponIndex">取消</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $("#demoC").on("click", function () {
+            $("#name").val("端午慶")
+            $("#texta").val("慶祝端午節，提供60元折扣券，快來上課吧!")
+            $("#cash").val(60)
+            $("#condition").val(600)
+            $("#startTime").val("2023-08-15")
+            $("#expireTime").val("2023-09-20")
+            $("#select")[0].selectedIndex = 0
+        })
+    </script>
+}
